@@ -21,3 +21,13 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# python
+venv
+__pycache__
+.flaskenv
+instance
+flask_session
+
+# sqlite database
+app.db

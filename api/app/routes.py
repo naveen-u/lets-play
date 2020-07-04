@@ -1,4 +1,4 @@
-from flask import session, request, jsonify, json, current_app
+from flask import request, jsonify, json, current_app
 from flask_login import current_user, login_user, logout_user
 from app.models import UserData, db
 from app import app
@@ -16,9 +16,9 @@ def session_access():
     if request.method == 'GET':
         if current_user.is_authenticated:
             return jsonify({
-                'user': session.get('user', ''),
-                'room': session.get('room', ''),
-                'id': session.get('id', '')
+                'user': current_user.username,
+                'room': current_user.room,
+                'id': current_user.id
             })
         else:
             return '', 401
@@ -38,9 +38,6 @@ def session_access():
                     login_user(u)
                     print(f'Logged in {data["user"]}: {id}')
                     print(f'Current user ID is {current_user.id if current_user.is_authenticated else "anonymous"}')
-                    session['user'] = data['user']
-                    session['room'] = data['room']
-                    session['id'] = id
                     return '', 204
                 else:
                     responseData = {
@@ -80,23 +77,14 @@ def session_access():
             login_user(u)
             print(f'Logged in {data["user"]}: {id}')
             print(f'Current user ID is {current_user.id if current_user.is_authenticated else "anonymous"}')
-            session['user'] = data['user']
-            session['room'] = room
-            session['id'] = id
             return jsonify({
                 'room': room
             })
-    # If no data came with the POST request, log user out and clean up session data
+    # If no data came with the POST request, log user out and clean up data
     else:
-        u = UserData.query.get(session.get('id', ''))
-        if u is not None:
-            print(f'Logging out {u.username}: {u.id}')
-            db.session.delete(u)
-            db.session.commit()
-            logout_user()
-            session.pop("user", None)
-            session.pop("room", None)
-            session.pop("id", None)
+        db.session.delete(current_user)
+        db.session.commit()
+        logout_user()
         return '', 204
 
 

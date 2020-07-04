@@ -11,11 +11,8 @@ const LeaveRoom = (props) => {
   const leaveRoom = () => {
     props.socket.emit('leave_room');
     props.socket.on('left_room', () => {
-      postSession({'successCallback': redirect});
-    })
-    const redirect = () => {
       history.push('/');
-    }
+    });
   }
 
   return (

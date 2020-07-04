@@ -54,7 +54,7 @@ const postSession = (options) => {
       }
     }
     else {
-      if (typeof successCallback !== 'undefined' && failureCallback !== null) {
+      if (typeof failureCallback !== 'undefined' && failureCallback !== null) {
         failureCallback(statusCode, data);
       }
     }

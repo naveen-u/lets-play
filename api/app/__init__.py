@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import Config
 
-socketio = SocketIO(cors_allowed_origins='*')
+socketio = SocketIO(manage_session=False, cors_allowed_origins='*')
 login = LoginManager()
 
 app = Flask(__name__, instance_relative_config=True)
@@ -19,4 +19,5 @@ login.init_app(app)
 Session(app)
 socketio.init_app(app)
 
-from app import routes, events, models
+from app import routes, models
+from app.events import chat, rooms

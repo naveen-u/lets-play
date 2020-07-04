@@ -6,7 +6,6 @@ import uuid
 import random
 import string
 
-
 @app.route('/session', methods=['GET', 'POST'])
 def session_access():
     """
@@ -69,11 +68,11 @@ def session_access():
                 return response
         # If only user field is present, user is trying to create a new room
         elif 'user' in data:
-            room = randomString(9)
+            room = random_string(9)
             query = db.session.query(UserData.room.distinct().label("room"))
             rooms = [room.room for room in query.all()]
             while room in rooms:
-                room = randomString(9)
+                room = random_string(9)
             id = str(uuid.uuid4())
             u = UserData(id=id, username=data['user'], room=room)
             db.session.add(u)
@@ -90,17 +89,18 @@ def session_access():
     # If no data came with the POST request, log user out and clean up session data
     else:
         u = UserData.query.get(session.get('id', ''))
-        print(f'Logging out {u.username}: {u.id}')
-        db.session.delete(u)
-        db.session.commit()
-        logout_user()
-        session.pop("user", None)
-        session.pop("room", None)
-        session.pop("id", None)
+        if u is not None:
+            print(f'Logging out {u.username}: {u.id}')
+            db.session.delete(u)
+            db.session.commit()
+            logout_user()
+            session.pop("user", None)
+            session.pop("room", None)
+            session.pop("id", None)
         return '', 204
 
 
-def randomString(stringLength):
+def random_string(stringLength):
     """
     Utility function to generate random string of given length
 

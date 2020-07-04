@@ -32,9 +32,7 @@ const Chat = (props) => {
 
   // Listen for messages from the server
   useEffect(() => {
-    props.socket.on('message', message => {
-      console.log('Got a message from the server!');
-      console.log(message);
+    props.socket.on('chat_message', message => {
       setMessages(messages => (messages.concat(message)));
     });
   }, []);
@@ -45,7 +43,7 @@ const Chat = (props) => {
       message
     };
     // Emit the message to the server
-    props.socket.send(messageObject);
+    props.socket.emit('chat_message', messageObject);
     messageObject.fromMe = true;
     addMessage(messageObject);
   }

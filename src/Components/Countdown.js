@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import Chat from './Chat/Chat';
+import { useHistory } from "react-router-dom";
+import io from 'socket.io-client';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
-import openSocket from 'socket.io-client';
-import Navbar from './Navbar';
+import Chat from './Chat';
+import Navbar from './Navbar/Navbar';
+import { getSession } from '../Utlis';
 
+const socket = io('127.0.0.1:5000');
 
 const useStyles = makeStyles((theme) => ({
     image: {
-      // backgroundImage: `url(${wallpaper})`,
       backgroundRepeat: 'no-repeat',
-      // backgroundColor:
-      //   theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
       backgroundSize: 'cover',
       backgroundPosition: 'center',
     },
@@ -55,37 +55,34 @@ const useStyles = makeStyles((theme) => ({
 
 const Countdown = (props) => {
   const classes = useStyles();
-  const socket = openSocket('127.0.0.1:5000');
-  const [inRoom, setInRoom] = useState(true);
+  const [room, setRoom] = useState('');
+  const [username, setUsername] = useState('');
 
-  useEffect(() => {
-    return (() => socket.close());
-  });
+  let history = useHistory();
   
   useEffect(() => {
-    socket.emit('joinRoom', {'user':props.username, 'room':props.room});
-  }, []);
-
-  useEffect(() => {
-    if (inRoom === false) {
-      socket.emit('leaveRoom');
-      socket.on('leftRoom', () => {
-        console.log('Got disconnect!');
-        props.quitGame();
-      })
+    
+    const successCallback = (statusCode, data) => {    
+      socket.emit('join_room');
+      setRoom(data.room);
+      setUsername(data.user);
     }
-  },[inRoom]);
+    const failureCallback = () => {
+      history.push('/');
+    }
+    getSession(successCallback, failureCallback);
+  }, []);
 
   return (
     <div>
       <CssBaseline />    
-      <Navbar room={props.room} username={props.username} setInRoom={setInRoom}/>
+      <Navbar room={room} username={username} socket={socket}/>
       <Grid container component="main">
         <Grid item xs={12} sm={8} md={9} className={classes.image} />
         <Grid item xs={false} sm={4} md={3} component={Paper}>
           <Box className={classes.paper}>
             <Chat 
-              username={props.username} 
+              username={username} 
               socket={socket}  
             />
           </Box>

@@ -63,7 +63,6 @@ const Countdown = (props) => {
   useEffect(() => {
     
     const successCallback = (statusCode, data) => {    
-      socket.emit('join_room');
       setRoom(data.room);
       setUsername(data.user);
     }
@@ -76,14 +75,13 @@ const Countdown = (props) => {
   return (
     <div>
       <CssBaseline />    
-      <Navbar room={room} username={username} socket={socket}/>
+      <Navbar room={room} username={username} />
       <Grid container component="main">
         <Grid item xs={12} sm={8} md={9} className={classes.image} />
         <Grid item xs={false} sm={4} md={3} component={Paper}>
           <Box className={classes.paper}>
             <Chat 
               username={username} 
-              socket={socket}  
             />
           </Box>
         </Grid>

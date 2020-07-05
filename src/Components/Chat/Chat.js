@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import io from 'socket.io-client';
 import Messages from './Messages';
 import ChatInput from './ChatInput';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
+
+const socket = io('127.0.0.1:5000/chat', {autoConnect: false});
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,11 +33,19 @@ const Chat = (props) => {
   const [messages, setMessages] = useState([]);
   const classes = useStyles();
 
-  // Listen for messages from the server
   useEffect(() => {
-    props.socket.on('chat_message', message => {
+    // Connect to the /chat namespace on component mount
+    socket.connect();
+
+    // Listen for messages from the server
+    socket.on('chat_message', message => {
       setMessages(messages => (messages.concat(message)));
     });
+
+    // Close socket (and leave room) when component unmounts
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   const sendHandler = (message) => {
@@ -43,7 +54,7 @@ const Chat = (props) => {
       message
     };
     // Emit the message to the server
-    props.socket.emit('chat_message', messageObject);
+    socket.emit('chat_message', messageObject);
     messageObject.fromMe = true;
     addMessage(messageObject);
   }

@@ -35,7 +35,7 @@ const Navbar = (props) => {
 
             <Divider orientation="vertical" flexItem className={classes.divider}/>
 
-            <LeaveRoom socket={props.socket}/>
+            <LeaveRoom />
 
             <Divider orientation="vertical" flexItem className={classes.divider}/>
 

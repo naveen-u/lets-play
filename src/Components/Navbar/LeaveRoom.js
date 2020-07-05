@@ -5,13 +5,14 @@ import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import Tooltip from '@material-ui/core/Tooltip';
 import { postSession } from '../../Utlis';
 
-const LeaveRoom = (props) => {
+const LeaveRoom = () => {
   let history = useHistory();
 
   const leaveRoom = () => {
-    props.socket.emit('leave_room');
-    props.socket.on('left_room', () => {
-      history.push('/');
+    postSession({
+      'successCallback': () => {
+        history.push('/') ;
+      }
     });
   }
 

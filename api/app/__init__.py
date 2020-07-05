@@ -16,8 +16,7 @@ app.config.from_pyfile('config.py')
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login.init_app(app)
-Session(app)
 socketio.init_app(app)
 
 from app import routes, models
-from app.events import chat, rooms
+from app.events import chat

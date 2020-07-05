@@ -36,8 +36,7 @@ def session_access():
                     db.session.add(u)
                     db.session.commit()
                     login_user(u)
-                    print(f'Logged in {data["user"]}: {id}')
-                    print(f'Current user ID is {current_user.id if current_user.is_authenticated else "anonymous"}')
+                    print(f'LOGGED IN\t| User: {current_user.username}\tRoom: {current_user.room}\tID: {current_user.id}')
                     return '', 204
                 else:
                     responseData = {
@@ -75,13 +74,13 @@ def session_access():
             db.session.add(u)
             db.session.commit()
             login_user(u)
-            print(f'Logged in {data["user"]}: {id}')
-            print(f'Current user ID is {current_user.id if current_user.is_authenticated else "anonymous"}')
+            print(f'LOGGED IN\t| User: {current_user.username}\tRoom: {current_user.room}\tID: {current_user.id}')
             return jsonify({
                 'room': room
             })
     # If no data came with the POST request, log user out and clean up data
     else:
+        print(f'LOGGING OUT \t| User: {current_user.username}\tRoom: {current_user.room}\tID: {current_user.id}')
         db.session.delete(current_user)
         db.session.commit()
         logout_user()

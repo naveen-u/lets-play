@@ -12,7 +12,7 @@ from flask_socketio import namespace
 from sqlalchemy import func
 
 from app import socketio, db, scheduler
-from app.routes import register_clean_up_method
+from app import register_clean_up_method
 from app.models.user_data import UserData
 from app.models.codenames import CodenamesPlayers, CodenamesTeams, CodenamesRooms, CodenamesWords
 
@@ -83,7 +83,6 @@ class Codenames(Namespace):
         """
         # Check if user is authenticated
         if not current_user.is_authenticated:
-            print('NOT AUTHENTICATED!')
             return
 
         if current_user.codenames_player is None:
@@ -156,7 +155,6 @@ class Codenames(Namespace):
                 data['clue'] = room.clue
             if current_user.codenames_player.spymaster_of is not None or room.state == STATES.GAME_OVER:
                 data['grid'] = room.grid
-                print('SENDING GRID DATA')
             emit('game_data', data, room=room.id)
     
     def on_disconnect(self):
@@ -309,24 +307,24 @@ class Codenames(Namespace):
                 room.turns_left = 0
             else:
                 room.turns_left = CodenamesRooms.turns_left - 1
-            db.session.commit()
+            # db.session.commit()
             r = None
             if grid[index] == 'B':
                 r = CodenamesTeams.query.filter_by(room=room, team_name=TEAMS.BLUE).first()
             if grid[index] == 'R':
                 r = CodenamesTeams.query.filter_by(room=room, team_name=TEAMS.RED).first()
             r.words_left = CodenamesTeams.words_left - 1
-            db.session.commit()
+            # db.session.commit()
             if r.words_left == 0:
                 room.state = STATES.GAME_OVER
                 winner = r.team_name
                 room.state_details = winner
         if grid[index] == 'N':
             room.turns_left = 0
-            db.session.commit()
+            # db.session.commit()
         if grid[index] == 'A':
             room.state = STATES.GAME_OVER
-            db.session.commit()
+            # db.session.commit()
             if team.team_name == TEAMS.BLUE:
                 winner = TEAMS.RED
             else:
@@ -362,6 +360,7 @@ class Codenames(Namespace):
             return
 
         current_user.room.codenames_room.state = STATES.STARTED
+        current_user.room.codenames_room.turns_left = 0
         db.session.commit()
         emit('game_state', STATES.STARTED, room=current_user.room_id)
         self.create_word_list()
@@ -378,7 +377,6 @@ class Codenames(Namespace):
         emit('game_state', STATES.JOIN, room=current_user.room_id)
 
         team = CodenamesTeams.query.filter_by(room_id=current_user.room_id, team_name=TEAMS.NEUTRAL).first()
-        # rows_changed = UserData.query.filter_by(room_id=current_user.room_id).update(dict(team=team))
         current_user.room.codenames_room.state = STATES.JOIN
         
 
@@ -388,58 +386,19 @@ class Codenames(Namespace):
         users = UserData.query.filter_by(room_id=current_user.room_id)
 
         for user in users:
+            leave_room(user.room_id+user.codenames_player.team.team_name)
             user.codenames_player.team = team
             team_list['players'].append({'id': user.id, 'user': user.username, 'team': TEAMS.NEUTRAL})
             if user.codenames_player.spymaster_of is not None:
                 user.codenames_player.spymaster_of.spymaster = None
 
         db.session.commit()
-        
-        # players = CodenamesTeams.query.filter_by(room_id=current_user.room_id)\
-        #         .join(CodenamesPlayers, CodenamesTeams.id == CodenamesPlayers.team_id)\
-        #         .with_entities(CodenamesPlayers.id, CodenamesTeams.team_name)\
-        #         .join(UserData, UserData.id == CodenamesPlayers.id)\
-        #         .with_entities(UserData.id, UserData.username, CodenamesTeams.team_name)\
-        #         .all()
-        
-        # for i in players:
-        #     player_id, name, team = i
-        #     team_list['players'].append({'id': player_id, 'user': name, 'team':team})
-        
-        # spymasters = CodenamesTeams.query\
-        #             .filter(CodenamesTeams.room_id==current_user.room_id,CodenamesTeams.spymaster!=None)\
-        #             .join(UserData, CodenamesTeams.spymaster == UserData.id)\
-        #             .with_entities(CodenamesTeams.spymaster, UserData.username, CodenamesTeams.team_name)\
-        #             .all()
-        
-        # for i in spymasters:
-        #     player_id, name, team = i
-        #     team_list[team + 'Master'] = {'id': player_id, 'user': name, 'team':team}
-
         team_list['currentTeam'] = TEAMS.NEUTRAL
         team_list['state'] = STATES.JOIN
         team_list['blueMaster'] = None
         team_list['redMaster'] = None
         emit('team_list', team_list, room=current_user.room_id)
-        # room = current_user.room.codenames_room
-        # if room.state not in [STATES.JOIN, STATES.RED_READY, STATES.BLUE_READY]:
-        #     data = {}
-        #     data['state'] = room.state
-        #     data['details'] = room.state_details
-        #     data['turns'] = room.turns_left
-        #     data['words'] = json.loads(room.words)
-        #     data['blueLeft'] = CodenamesTeams.query.filter_by(room=room, team_name=TEAMS.BLUE).first().words_left
-        #     data['redLeft'] = CodenamesTeams.query.filter_by(room=room, team_name=TEAMS.RED).first().words_left
-        #     if room.state in [STATES.BLUE_PLAYER, STATES.RED_PLAYER]:
-        #         data['clue'] = room.clue
-        #     if current_user.codenames_player.spymaster_of is not None or room.state == STATES.GAME_OVER:
-        #         data['grid'] = room.grid
-        #         print('SENDING GRID DATA')
-        #     emit('game_data', data, room=room.id)
 
-
-
-    
     def on_chat_message(self, message):
         """
         Handles the chat_message event in this namespace.

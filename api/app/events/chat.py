@@ -1,7 +1,7 @@
 from flask_socketio import Namespace, emit, join_room, leave_room
 from flask_login import current_user
 from app import socketio
-from app.routes import register_clean_up_method
+from app import register_clean_up_method
 
 class Chat(Namespace):
     """
@@ -14,17 +14,14 @@ class Chat(Namespace):
         Adds user to the room in the /chat namespace.
         """
         if current_user.is_authenticated:
-            # print(f'CONNECT\t\t| User: {current_user.username}\tRoom: {current_user.room_id}\tID: {current_user.id}')
             join_room(current_user.room_id)
             message = dict()
             message['message'] = f'{current_user.username} joined the room!'
             emit('chat_message', message, room=current_user.room_id, include_self=False)
         else:
-            # print('CONNECT\t\t| ANONYMOUS')
             pass
 
     def on_disconnect(self):
-        # print('DISCONNECT')
         pass
 
     def on_chat_message(self, message):
@@ -34,7 +31,6 @@ class Chat(Namespace):
         in the same room.
         """
         if current_user.is_authenticated:
-            # print(f'MESSAGE\t\t| User: {current_user.username}\tRoom: {current_user.room_id}\tID: {current_user.id}')
             message['username'] = current_user.username
             emit('chat_message', message, room=current_user.room_id, include_self=False)
 

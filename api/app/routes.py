@@ -2,21 +2,10 @@ from flask import request, jsonify, json, current_app
 from flask_login import current_user, login_user, logout_user
 from flask_socketio import emit
 from app.models import UserData, RoomData
-from app import app, db, socketio
+from app import app, db, socketio, clean_up_methods
 import uuid
 import random
 import string
-
-# List of methods to be called on logout.
-clean_up_methods = []
-
-def register_clean_up_method(foo):
-    """
-    Decorator to register a method as a clean up method. Clean up methods are
-    called before a user logs out. Any clean up that requires current_user needs
-    to be registered with this. After log out, current_user would be anonymous.
-    """
-    clean_up_methods.append(foo)
 
 @app.route('/session', methods=['GET', 'POST'])
 def session_access():
@@ -27,7 +16,6 @@ def session_access():
     # Get session data if user is already logged in
     if request.method == 'GET':
         if current_user.is_authenticated:
-            print(current_user.admin_of)
             return jsonify({
                 'user': current_user.username,
                 'room': current_user.room_id,
@@ -50,7 +38,6 @@ def session_access():
                     db.session.add(u)
                     db.session.commit()
                     login_user(u)
-                    # print(f'LOGGED IN\t| User: {current_user.username}\tRoom: {current_user.room_id}\tID: {current_user.id}')
                     return '', 204
                 else:
                     responseData = {
@@ -88,13 +75,11 @@ def session_access():
             db.session.add(u)
             db.session.commit()
             login_user(u)
-            # print(f'LOGGED IN\t| User: {current_user.username}\tRoom: {current_user.room_id}\tID: {current_user.id}')
             return jsonify({
                 'room': room
             })
     # If no data came with the POST request, log user out and clean up data
     else:
-        # print(f'LOGGING OUT \t| User: {current_user.username}\tRoom: {current_user.room_id}\tID: {current_user.id}')
         for func in clean_up_methods:
             func(current_user=current_user)
         room = current_user.room

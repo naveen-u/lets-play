@@ -29,4 +29,15 @@ socketio_logger = logging.getLogger('socketio')
 engineio_logger = logging.getLogger('engineio')
 socketio.init_app(app)
 
+# List of methods to be called on logout.
+clean_up_methods = []
+
+def register_clean_up_method(foo):
+    """
+    Decorator to register a method as a clean up method. Clean up methods are
+    called before a user logs out. Any clean up that requires current_user needs
+    to be registered with this. After log out, current_user would be anonymous.
+    """
+    clean_up_methods.append(foo)
+
 from app import routes, events, models

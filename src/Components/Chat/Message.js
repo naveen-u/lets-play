@@ -63,7 +63,7 @@ const Message = (props) => {
         </Typography>
       </li>
     }
-    { props.username === '' ?
+    { props.username === '' && !props.fromMe ?
       <ListItem dense className={classes.list}>
         <ListItemText primary={
           <span className={classes.systemMessage}>

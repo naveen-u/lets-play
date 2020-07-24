@@ -41,7 +41,7 @@ const Login = () => {
       history.push('/play');
     };
     getSession(redirect);
-  }, []);
+  }, [history]);
 
   return (
     <Grid container component="main" className={classes.root}>

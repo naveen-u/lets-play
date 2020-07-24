@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import io from 'socket.io-client';
+import Box from '@material-ui/core/Box';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
+
 import Messages from './Messages';
 import ChatInput from './ChatInput';
-import { makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
 
-const socket = io('127.0.0.1:5000/chat', {autoConnect: false});
+let socket = io('/chat', {autoConnect: false});
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -14,9 +19,9 @@ const useStyles = makeStyles((theme) => ({
   },
   container1: {
     marginTop: theme.spacing(2),
-    height: '74vh',
+    height: teamChatEnabled => teamChatEnabled ? '66vh' : '73vh',
     width: '100%',
-    maxHeigt: '90%',
+    maxHeight: '90%',
     overflowY: 'auto!important',
   },
   container2: {
@@ -27,15 +32,27 @@ const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
   },
+  toggleGroup: {
+    width: '100%',
+  },
+  toggleButton: {
+    width: '50%',
+  }
 }));
 
 const Chat = (props) => {
   const [messages, setMessages] = useState([]);
-  const classes = useStyles();
+  const [teamMessages, setTeamMessages] = useState([]);
+  const [chatType, setChatType] = useState('global');
 
   useEffect(() => {
+    if (typeof props.socket !== 'undefined' && props.socket !== null) {
+      socket = props.socket;
+    }
     // Connect to the /chat namespace on component mount
-    socket.connect();
+    if (!socket.connected) {
+      socket.connect();
+    }
 
     // Listen for messages from the server
     socket.on('chat_message', message => {
@@ -46,11 +63,21 @@ const Chat = (props) => {
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [props.socket]);
+
+  useEffect(() => {
+    if (typeof props.teamSocket !== 'undefined' && props.teamSocket !== null) {
+      console.log('Setting up listener');
+      props.teamSocket.on('chat_message', message => {
+        console.log('Got team chat message');
+        console.log(message);
+        setTeamMessages(teamMessages => (teamMessages.concat(message)))
+      });
+    }
+  }, [props.teamSocket]);
 
   const sendHandler = (message) => {
     const messageObject = {
-      username: props.username,
       message
     };
     // Emit the message to the server
@@ -59,20 +86,74 @@ const Chat = (props) => {
     addMessage(messageObject);
   }
 
+  const sendTeamHandler = (message) => {
+    const messageObject = {
+      message
+    };
+    // Emit the message to the server
+    props.teamSocket.emit('chat_message', messageObject);
+    messageObject.fromMe = true;
+    addTeamMessage(messageObject);
+  }
+
   const addMessage = (message) => {
     // Append the message to the component state
     const messageList = messages.concat(message);
     setMessages(messageList);
   }
 
+  const addTeamMessage = (message) => {
+    // Append the message to the component state
+    const messageList = teamMessages.concat(message);
+    setTeamMessages(messageList);
+  }
+
+  const handleChatChange = (event, newValue) => {
+    setChatType(newValue);
+  };
+
+  const teamChatEnabled = (typeof props.teamSocket !== 'undefined' && props.teamSocket !== null);
+
+  const classes = useStyles(teamChatEnabled);
+
   return (
     <Box className={classes.root}>
-      <Box className={classes.container1}>
-        <Messages messages={messages} />
-      </Box>
-      <Box className={classes.container2}>
-        <ChatInput onSend={sendHandler} />
-      </Box>
+      {chatType === 'global' ?
+        <>
+        <Box className={classes.container1}>
+          <Messages messages={messages} />
+        </Box>
+        <Box className={classes.container2}>
+          <ChatInput onSend={sendHandler} />
+        </Box>
+        </>
+        : 
+        <>
+        <Box className={classes.container1}>
+          <Messages messages={teamMessages} />
+        </Box>
+        <Box className={classes.container2}>
+          <ChatInput onSend={sendTeamHandler} />
+        </Box>
+        </>
+      }
+      {teamChatEnabled ? 
+        <ToggleButtonGroup
+          value={chatType}
+          exclusive
+          onChange={handleChatChange}
+          aria-label="chat type"
+          className={classes.toggleGroup}
+        >
+          <ToggleButton value="global" aria-label="global chat" className={classes.toggleButton}>
+            Global
+          </ToggleButton>
+          <ToggleButton value="team" aria-label="team chat" className={classes.toggleButton}>
+            Team
+          </ToggleButton>
+        </ToggleButtonGroup>
+        : ''
+      }
     </Box>
   );
 }

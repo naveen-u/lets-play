@@ -9,6 +9,7 @@ import SpymasterInput from './SpymasterInput';
 import StatusBar from './StatusBar';
 import WordGrid from './WordGrid';
 import { TEAMS, STATES } from './Constants';
+import PlayerList from './PlayerList';
 
 const useStyles = makeStyles((theme) => ({
   clue: {
@@ -140,6 +141,14 @@ const Game = (props) => {
               color="primary"
               onClick={sameTeams}
               className={classes.endGameButton}
+              disabled={!(props.blueMaster && props.redMaster && 
+                Math.abs(
+                  props.playerList.filter(player => player.team === TEAMS.BLUE).length
+                  - props.playerList.filter(player => player.team === TEAMS.RED).length
+                ) <= 1 &&
+                props.playerList.filter(player => player.team === TEAMS.BLUE).length >= 2 &&
+                props.playerList.filter(player => player.team === TEAMS.RED).length >= 2
+              )}
             >
               Play again with same teams
             </Button>

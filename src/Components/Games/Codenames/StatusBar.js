@@ -58,8 +58,8 @@ const StatusBar = (props) => {
                      props.details === TEAMS.RED ? TEAMS.RED + ' TEAM WINS!' :
                      props.details === TEAMS.BLUE + CONSTANTS.SPYMASTER ? TEAMS.BLUE + ' SPYMASTER LEFT!' :
                      props.details === TEAMS.RED + CONSTANTS.SPYMASTER ? TEAMS.RED + ' SPYMASTER LEFT!' :
-                     props.details === TEAMS.BLUE + CONSTANTS.PLAYER ? TEAMS.BLUE + ' PLAYERS LEFT!' :
-                     props.details === TEAMS.RED + CONSTANTS.PLAYER ? TEAMS.RED + ' PLAYERS LEFT!' :
+                     props.details === TEAMS.BLUE + CONSTANTS.PLAYER ? 'ALL THE BLUE PLAYERS LEFT!' :
+                     props.details === TEAMS.RED + CONSTANTS.PLAYER ? 'ALL THE RED PLAYERS LEFT!' :
                      '';
 
   const winColor = props.details === TEAMS.BLUE ? TEAMS.BLUE :

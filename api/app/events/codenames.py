@@ -1,17 +1,12 @@
-import datetime
-from datetime import date
 import json
-import logging
 import random
 from types import SimpleNamespace
 
-from flask import request
 from flask_socketio import Namespace, emit, join_room, leave_room
 from flask_login import current_user
-from flask_socketio import namespace
 from sqlalchemy import func
 
-from app import socketio, db, scheduler
+from app import socketio, db
 from app import register_clean_up_method
 from app.models.user_data import UserData
 from app.models.codenames import CodenamesPlayers, CodenamesTeams, CodenamesRooms, CodenamesWords
@@ -69,6 +64,20 @@ STATES = SimpleNamespace(**STATES_DICT)
 #                                                                    #
 # team_ready            Sent by client when the spymaster marks      #
 #                       their team as ready to start.                #
+#                                                                    #
+# clue                  Fired when a spymaster sends the clue for    #
+#                       their team's turn.                           #
+#                                                                    #
+# word_click            Fired when a player clicks on a word cell    #
+#                                                                    #
+# restart_with_same_teams   Fired when the room admin chooses the    #
+#                       restart with same teams option.              #
+#                                                                    #
+# restart               Fired when the room admin chooses the "Start #
+#                       a new game" option.                          #
+#                                                                    #
+# chat_message          Fired when a user sends a chat message to    #
+#                       their team.                                  #
 #                                                                    #
 ######################################################################
 
@@ -244,7 +253,15 @@ class Codenames(Namespace):
         # Check that user is a spymaster
         if current_user.codenames_player.team.spymaster_player != current_user.codenames_player:
             return
+
         team = current_user.codenames_player.team
+
+        if team.spymaster is None:
+            return
+
+        if not self.player_distribution_is_valid(check_spymaster=False):
+            return
+
         if team.team_name == TEAMS.RED:
             if team.room.state == STATES.JOIN:
                 team.room.state = STATES.RED_READY
@@ -265,6 +282,9 @@ class Codenames(Namespace):
             self.create_word_list()
     
     def on_clue(self, data):
+        """
+        Handles the clue event. This is fired when a spymaster sends a clue to their team.
+        """
         # Check if user is authenticated and playing the game
         if not current_user.is_authenticated or current_user.codenames_player is None:
             return
@@ -294,6 +314,9 @@ class Codenames(Namespace):
         emit('game_data', data, room=current_user.room_id)
     
     def on_word_click(self, index):
+        """
+        Handles the word_click event. This is fired when a player clicks on a word cell.
+        """
         # Check if user is authenticated and playing the game
         if not current_user.is_authenticated or current_user.codenames_player is None:
             return
@@ -361,6 +384,8 @@ class Codenames(Namespace):
     
     def on_restart_with_same_teams(self):
         """
+        Handles the restart_with_same_teams event. This is fired when the room admin choses
+        to start a new game with the same teams.
         """
         if not current_user.is_authenticated or current_user.codenames_player is None:
             return
@@ -372,6 +397,9 @@ class Codenames(Namespace):
                 current_user.room.codenames_room.state_details == TEAMS.RED + SPYMASTER:
             return
 
+        if not self.player_distribution_is_valid:
+            return
+
         current_user.room.codenames_room.state = STATES.STARTED
         current_user.room.codenames_room.turns_left = 0
         db.session.commit()
@@ -380,6 +408,8 @@ class Codenames(Namespace):
     
     def on_restart(self):
         """
+        Handles the restart_with_same_teams event. This is fired when the room admin choses
+        to start a new game.
         """
         if not current_user.is_authenticated or current_user.codenames_player is None:
             return
@@ -468,6 +498,19 @@ class Codenames(Namespace):
                 else:
                     team.words_left = 8
             db.session.commit()
+
+    def player_distribution_is_valid(self, check_spymaster=True):
+        blueTeam = CodenamesTeams.query.filter_by(room=current_user.room.codenames_room, team_name=TEAMS.BLUE).first()
+        redTeam = CodenamesTeams.query.filter_by(room=current_user.room.codenames_room, team_name=TEAMS.RED).first()
+
+        if check_spymaster:
+            if blueTeam.spymaster is None or redTeam.spymaster is None:
+                return False
+
+        if len(blueTeam.players) < 2 or len(redTeam.players) < 2 or abs(len(blueTeam.players) - len(redTeam.players)) > 1:
+            return False
+
+        return True
 
 #########################################
 #                                       #

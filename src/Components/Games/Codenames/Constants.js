@@ -15,6 +15,9 @@ const STATES = {
     GAME_OVER: 'GAME_OVER'
 };
 
+const CONSTANTS = {
+    SPYMASTER: 'Spymaster',
+    PLAYER: 'Player'
+}
 
-
-export {TEAMS, STATES};
+export {TEAMS, STATES, CONSTANTS};

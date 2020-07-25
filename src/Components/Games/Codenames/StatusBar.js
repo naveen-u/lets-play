@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
 import WordGrid from './WordGrid';
-import { TEAMS, STATES } from './Constants';
+import { TEAMS, STATES, CONSTANTS } from './Constants';
 import SpymasterInput from './SpymasterInput';
 
 const useStyles = makeStyles((theme) => ({
@@ -56,8 +56,10 @@ const StatusBar = (props) => {
 
   const winMessage = props.details === TEAMS.BLUE ? TEAMS.BLUE + ' TEAM WINS!' :
                      props.details === TEAMS.RED ? TEAMS.RED + ' TEAM WINS!' :
-                     props.details === TEAMS.BLUE + 'spymaster' ? TEAMS.BLUE + ' SPYMASTER LEFT!' :
-                     props.details === TEAMS.RED + 'spymaster' ? TEAMS.RED + ' SPYMASTER LEFT!' :
+                     props.details === TEAMS.BLUE + CONSTANTS.SPYMASTER ? TEAMS.BLUE + ' SPYMASTER LEFT!' :
+                     props.details === TEAMS.RED + CONSTANTS.SPYMASTER ? TEAMS.RED + ' SPYMASTER LEFT!' :
+                     props.details === TEAMS.BLUE + CONSTANTS.PLAYER ? TEAMS.BLUE + ' PLAYERS LEFT!' :
+                     props.details === TEAMS.RED + CONSTANTS.PLAYER ? TEAMS.RED + ' PLAYERS LEFT!' :
                      '';
 
   const winColor = props.details === TEAMS.BLUE ? TEAMS.BLUE :

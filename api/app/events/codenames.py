@@ -176,14 +176,23 @@ class Codenames(Namespace):
 
         newTeam = CodenamesTeams.query.filter_by(room_id=current_user.room_id, team_name=message).first()
         oldTeam = current_user.codenames_player.team
-        # If player was spymaster of their old team, mark the team as not ready
-        if oldTeam.spymaster is not None and oldTeam.spymaster == current_user.id:
-            oldTeam.spymaster = None
-            state = oldTeam.room.state
-            if state == STATES.RED_READY and oldTeam.team_name == TEAMS.RED or\
-                    state == STATES.BLUE_READY and oldTeam.team_name == TEAMS.BLUE:
+
+        # If the old team was ready but the player leaving was a spymaster or the last player,
+        # mark the team as not ready
+        state = oldTeam.room.state
+        if state == STATES.RED_READY and oldTeam.team_name == TEAMS.RED or\
+                state == STATES.BLUE_READY and oldTeam.team_name == TEAMS.BLUE:
+            if oldTeam.spymaster is not None and oldTeam.spymaster == current_user.id:
                 oldTeam.room.state = STATES.JOIN
                 emit('game_state', STATES.JOIN, room=current_user.room_id)
+            elif len(oldTeam.players) == 2:
+                oldTeam.room.state = STATES.JOIN
+                emit('game_state', STATES.JOIN, room=current_user.room_id)
+
+        # If player was spymaster of their old team, remove team's spymaster
+        if oldTeam.spymaster is not None and oldTeam.spymaster == current_user.id:
+            oldTeam.spymaster = None
+
         current_user.codenames_player.team = newTeam
         db.session.commit()
         # Send signal
@@ -334,7 +343,8 @@ class Codenames(Namespace):
             elif room.state == STATES.RED_PLAYER:
                 room.state = STATES.BLUE_SPYMASTER
         room.words = json.dumps(words)
-        current_team.words_left = CodenamesTeams.words_left - 1
+        if current_team is not None:
+            current_team.words_left = CodenamesTeams.words_left - 1
         db.session.commit()
         data = {}
         data['words'] = words
@@ -424,6 +434,7 @@ class Codenames(Namespace):
         db.session.commit()
         data = {}
         data['words'] = list_of_words
+        data['turns'] = 0
         l = ['A'] + ['N']*7 + ['B']*8 + ['R']*8
         if random.getrandbits(1):
             current_user.room.codenames_room.state = STATES.BLUE_SPYMASTER
@@ -458,8 +469,6 @@ class Codenames(Namespace):
                     team.words_left = 8
             db.session.commit()
 
-        
-
 #########################################
 #                                       #
 #                CLEANUP                # 
@@ -472,25 +481,41 @@ def cleanup_codenames(current_user):
     Registering a cleanup method for the codenames namespace. This removes the user
     from their team's list of players.
     """
-    team = None
-    if current_user.codenames_player is not None:
-        team = current_user.codenames_player.team
-        if team.spymaster_player == current_user.codenames_player:
-            team.spymaster = None
-            if team.room.state == STATES.RED_READY and team.team_name == TEAMS.RED or\
-                    team.room.state == STATES.BLUE_READY and team.team_name == TEAMS.BLUE:
-                team.room.state = STATES.JOIN
-                emit('game_state', STATES.JOIN, room=current_user.room_id, namespace=NAMESPACE)
-            elif team.room.state != STATES.GAME_OVER:
-                team.room.state = STATES.GAME_OVER
-                team.room.state_details = team.team_name + SPYMASTER
-                data = {}
-                data['state'] = team.room.state
-                data['details'] = team.room.state_details
-                data['grid'] = team.room.grid
-                emit('game_data', data, room=current_user.room_id, namespace=NAMESPACE)
-        db.session.delete(current_user.codenames_player)
-        db.session.commit()
+    if current_user.codenames_player is None:
+        return
+
+    team = current_user.codenames_player.team
+    if team.spymaster_player == current_user.codenames_player:
+        team.spymaster = None
+        if team.room.state == STATES.RED_READY and team.team_name == TEAMS.RED or\
+                team.room.state == STATES.BLUE_READY and team.team_name == TEAMS.BLUE:
+            team.room.state = STATES.JOIN
+            emit('game_state', STATES.JOIN, room=current_user.room_id, namespace=NAMESPACE)
+        elif team.room.state != STATES.GAME_OVER:
+            team.room.state = STATES.GAME_OVER
+            team.room.state_details = team.team_name + SPYMASTER
+            data = {}
+            data['state'] = team.room.state
+            data['details'] = team.room.state_details
+            data['grid'] = team.room.grid
+            emit('game_data', data, room=current_user.room_id, namespace=NAMESPACE)
+    elif len(team.players) == 2:
+        if team.room.state == STATES.RED_READY and team.team_name == TEAMS.RED or\
+                team.room.state == STATES.BLUE_READY and team.team_name == TEAMS.BLUE:
+            team.room.state = STATES.JOIN
+            emit('game_state', STATES.JOIN, room=current_user.room_id, namespace=NAMESPACE)
+        elif team.room.state != STATES.GAME_OVER:
+            team.room.state = STATES.GAME_OVER
+            team.room.state_details = team.team_name + PLAYER
+            data = {}
+            data['state'] = team.room.state
+            data['details'] = team.room.state_details
+            data['grid'] = team.room.grid
+            emit('game_data', data, room=current_user.room_id, namespace=NAMESPACE)
+
+    db.session.delete(current_user.codenames_player)
+    db.session.commit()
+
     players = UserData.query.filter_by(room_id=current_user.room_id).all()
     if len(players) == 1:
         teams = CodenamesTeams.query.filter_by(room_id=current_user.room_id).all()
@@ -502,6 +527,5 @@ def cleanup_codenames(current_user):
     message = dict()
     message['id'] = current_user.id
     emit('leave_game', message, room=current_user.room_id, namespace=NAMESPACE)
-
 
 socketio.on_namespace(Codenames(NAMESPACE))

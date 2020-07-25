@@ -81,7 +81,7 @@ def session_access():
     # If no data came with the POST request, log user out and clean up data
     else:
         for func in clean_up_methods:
-            func(current_user=current_user)
+            func(current_user)
         room = current_user.room
         if room.admin == current_user:
             new_admin = UserData.query.filter(UserData.room_id == room.id, UserData.id != current_user.id).first()

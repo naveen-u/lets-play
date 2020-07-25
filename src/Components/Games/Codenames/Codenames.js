@@ -33,11 +33,11 @@ const Codenames = (props) => {
 
     // team_list event rewrites present team list.
     socket.on('team_list', data => {
-      if (typeof data.blueMaster !== 'undefined') {
-        setBlueMaster(data.blueMaster || '');
+      if (typeof data.blueSpymaster !== 'undefined') {
+        setBlueMaster(data.blueSpymaster || '');
       }
-      if (typeof data.redMaster !== 'undefined') {
-        setRedMaster(data.redMaster || '');
+      if (typeof data.redSpymaster !== 'undefined') {
+        setRedMaster(data.redSpymaster || '');
       }
       if (data.currentTeam === TEAMS.BLUE) {
         setCurrentTeam(TEAMS.BLUE);

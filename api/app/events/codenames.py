@@ -24,6 +24,8 @@ from app.models.codenames import CodenamesPlayers, CodenamesTeams, CodenamesRoom
 
 # Socketio namespace for this game
 NAMESPACE = '/codenames'
+SPYMASTER = 'Spymaster'
+PLAYER = 'Player'
 
 # Team names
 TEAMS_DICT = {
@@ -42,8 +44,8 @@ STATES_DICT = {
     'BLUE_PLAYER': 'BLUE_PLAYER',           # blue team's turn to guess words
     'RED_PLAYER': 'RED_PLAYER',             # red team's turn to guess words
     'BLUE_SPYMASTER': 'BLUE_SPYMASTER',     # blue spymaster's turn to give a clue
-    'RED_SPYMASTER': 'RED_SPYMASTER',     # red spymaster's turn to give a clue
-    'GAME_OVER': 'GAME_OVER'
+    'RED_SPYMASTER': 'RED_SPYMASTER',       # red spymaster's turn to give a clue
+    'GAME_OVER': 'GAME_OVER',               # game ended
 }
 STATES = SimpleNamespace(**STATES_DICT)
 
@@ -138,7 +140,7 @@ class Codenames(Namespace):
         
         for i in spymasters:
             player_id, name, team = i
-            team_list[team + 'Master'] = {'id': player_id, 'user': name, 'team':team}
+            team_list[team + SPYMASTER] = {'id': player_id, 'user': name, 'team':team}
 
         team_list['currentTeam'] = current_user.codenames_player.team.team_name
         emit('team_list', team_list, room=current_user.sid)
@@ -301,30 +303,26 @@ class Codenames(Namespace):
         grid = room.grid
         words[index] = grid[index]
         winner = None
+        current_team = None
         if grid[index] in ['B', 'R']:
             if (grid[index] == 'R' and team.team_name == TEAMS.BLUE) or \
                     (grid[index] == 'B' and team.team_name == TEAMS.RED):
                 room.turns_left = 0
             else:
                 room.turns_left = CodenamesRooms.turns_left - 1
-            # db.session.commit()
             r = None
             if grid[index] == 'B':
-                r = CodenamesTeams.query.filter_by(room=room, team_name=TEAMS.BLUE).first()
+                current_team = CodenamesTeams.query.filter_by(room=room, team_name=TEAMS.BLUE).first()
             if grid[index] == 'R':
-                r = CodenamesTeams.query.filter_by(room=room, team_name=TEAMS.RED).first()
-            r.words_left = CodenamesTeams.words_left - 1
-            # db.session.commit()
-            if r.words_left == 0:
+                current_team = CodenamesTeams.query.filter_by(room=room, team_name=TEAMS.RED).first()
+            if current_team.words_left == 1:
                 room.state = STATES.GAME_OVER
-                winner = r.team_name
+                winner = current_team.team_name
                 room.state_details = winner
         if grid[index] == 'N':
             room.turns_left = 0
-            # db.session.commit()
         if grid[index] == 'A':
             room.state = STATES.GAME_OVER
-            # db.session.commit()
             if team.team_name == TEAMS.BLUE:
                 winner = TEAMS.RED
             else:
@@ -336,6 +334,7 @@ class Codenames(Namespace):
             elif room.state == STATES.RED_PLAYER:
                 room.state = STATES.BLUE_SPYMASTER
         room.words = json.dumps(words)
+        current_team.words_left = CodenamesTeams.words_left - 1
         db.session.commit()
         data = {}
         data['words'] = words
@@ -359,6 +358,10 @@ class Codenames(Namespace):
         if not current_user.room.codenames_room.state == STATES.GAME_OVER:
             return
 
+        if current_user.room.codenames_room.state_details == TEAMS.BLUE + SPYMASTER or\
+                current_user.room.codenames_room.state_details == TEAMS.RED + SPYMASTER:
+            return
+
         current_user.room.codenames_room.state = STATES.STARTED
         current_user.room.codenames_room.turns_left = 0
         db.session.commit()
@@ -378,6 +381,7 @@ class Codenames(Namespace):
 
         team = CodenamesTeams.query.filter_by(room_id=current_user.room_id, team_name=TEAMS.NEUTRAL).first()
         current_user.room.codenames_room.state = STATES.JOIN
+        current_user.room.codenames_room.state_details = None
         
 
         team_list = dict()
@@ -395,8 +399,8 @@ class Codenames(Namespace):
         db.session.commit()
         team_list['currentTeam'] = TEAMS.NEUTRAL
         team_list['state'] = STATES.JOIN
-        team_list['blueMaster'] = None
-        team_list['redMaster'] = None
+        team_list[TEAMS.BLUE + SPYMASTER] = None
+        team_list[TEAMS.RED + SPYMASTER] = None
         emit('team_list', team_list, room=current_user.room_id)
 
     def on_chat_message(self, message):
@@ -479,7 +483,7 @@ def cleanup_codenames(current_user):
                 emit('game_state', STATES.JOIN, room=current_user.room_id, namespace=NAMESPACE)
             elif team.room.state != STATES.GAME_OVER:
                 team.room.state = STATES.GAME_OVER
-                team.room.state_details = team.team_name + 'spymaster'
+                team.room.state_details = team.team_name + SPYMASTER
                 data = {}
                 data['state'] = team.room.state
                 data['details'] = team.room.state_details

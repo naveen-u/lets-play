@@ -6,7 +6,7 @@ from flask_migrate import current
 from flask_socketio import emit
 from flask_login import current_user
 
-from app import socketio, scheduler, db, app
+from app import socketio, scheduler, db, flask_app
 from app.models import UserData
 from app.routes import clean_up_methods
 
@@ -45,7 +45,7 @@ def cleanup(socket_id):
     current_user = UserData.query.filter_by(sid=socket_id).first()
     if current_user is not None:
         log.info('Got user for disconnected socket. Performing cleanup.')
-        with app.app_context():
+        with flask_app.app_context():
             for func in clean_up_methods:
                 func(current_user)
             room = current_user.room

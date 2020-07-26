@@ -49,16 +49,16 @@ def cleanup(socket_id):
             for func in clean_up_methods:
                 func(current_user)
             room = current_user.room
-            was_admin = False
             if room.admin == current_user:
-                was_admin = True
+                new_admin = UserData.query.filter(UserData.room_id == room.id, UserData.id != current_user.id).first()
+                if new_admin is not None:
+                    room.admin = new_admin
+                    socketio.emit('set_admin', True, room=new_admin.sid)
             db.session.delete(current_user)
             db.session.commit()
             if not room.users:
                 db.session.delete(room)
                 db.session.commit()
-            elif was_admin:
-                room.admin = room.users[0]
-                db.session.commit()
+
     else:
         log.info('Did not recieve user data for socket ID. User possibly reconnected.')

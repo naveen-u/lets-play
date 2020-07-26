@@ -20,6 +20,10 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.getContrastText(theme.palette.background.default),
     backgroundColor: theme.palette.background.paper,
   },
+  disabled: {
+    color: theme.palette.text.secondary,
+    backgroundColor: 'inherit',
+  },
 }));
 
 const NumberPicker = (props) => {
@@ -51,8 +55,8 @@ const NumberPicker = (props) => {
     const numberRow = [];
     for (let j=0; j<3; ++j) {
       numberRow.push(
-        <IconButton onClick={getSetFunction(i)} >
-          <Avatar className={classes.number}>{i}</Avatar>
+        <IconButton onClick={getSetFunction(i)} disabled={props.maxNum < i}>
+          <Avatar className={`${classes.number} ${props.maxNum < i ? classes.disabled : ''}`}>{i}</Avatar>
         </IconButton>
       );
       ++i;

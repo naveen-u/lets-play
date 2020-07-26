@@ -84,6 +84,8 @@ const Game = (props) => {
   
   const gameOver = props.gameState === STATES.GAME_OVER;
 
+  const currentTeamLeft = props.currentTeam === TEAMS.BLUE ? blueLeft : redLeft;
+
   const classes = useStyles({currentColor});
 
   const sameTeams = () => {
@@ -117,6 +119,8 @@ const Game = (props) => {
           <SpymasterInput
             socket={props.socket}
             themeColor={themeColor}
+            maxNum={currentTeamLeft}
+            words={words}
           />
           :
           <Grid item>

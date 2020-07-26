@@ -297,7 +297,15 @@ class Codenames(Namespace):
                 (current_user.room.codenames_room.state == STATES.RED_SPYMASTER and \
                 current_user.codenames_player.team.team_name == TEAMS.RED )):
             return
-        
+        # Check that the clue does not contain any of the words in the grid
+        for word in json.loads(current_user.room.codenames_room.words):
+            if word not in ['R', 'B', 'N', 'A'] and word in data['clue']:
+                print(f'\n\n\n{word} is inside {data["clue"]}\n\n\n')
+                return
+        # Check that the clue number is at most the number of words left
+        if current_user.codenames_player.team.words_left < data['number']:
+            return
+
         current_user.room.codenames_room.clue = data['clue']
         current_user.room.codenames_room.turns_left = data['number'] + 1
         state = None
@@ -534,7 +542,7 @@ def cleanup_codenames(current_user):
                 team.room.state == STATES.BLUE_READY and team.team_name == TEAMS.BLUE:
             team.room.state = STATES.JOIN
             emit('game_state', STATES.JOIN, room=current_user.room_id, namespace=NAMESPACE)
-        elif team.room.state != STATES.GAME_OVER:
+        elif team.room.state != STATES.GAME_OVER and team.room.state != STATES.JOIN:
             team.room.state = STATES.GAME_OVER
             team.room.state_details = team.team_name + SPYMASTER
             data = {}
@@ -547,7 +555,7 @@ def cleanup_codenames(current_user):
                 team.room.state == STATES.BLUE_READY and team.team_name == TEAMS.BLUE:
             team.room.state = STATES.JOIN
             emit('game_state', STATES.JOIN, room=current_user.room_id, namespace=NAMESPACE)
-        elif team.room.state != STATES.GAME_OVER:
+        elif team.room.state != STATES.GAME_OVER and team.room.state != STATES.JOIN:
             team.room.state = STATES.GAME_OVER
             team.room.state_details = team.team_name + PLAYER
             data = {}

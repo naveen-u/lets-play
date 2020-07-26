@@ -34,6 +34,19 @@ const SpymasterInput = (props) => {
       setClueError('You can\'t not give a clue!');
       return
     }
+    const isSubstring = (word) => {
+      if (['R', 'B', 'N', 'A'].includes(word)) {
+        return false;
+      }
+      if (clue.toLowerCase().includes(word.toLowerCase())) {
+        setClueError('The clue cannot contain any codewords!');
+        return true;
+      }
+      return false;
+    }
+    if (props.words.some(isSubstring)) {
+      return
+    }
     const data = {}
     data['clue'] = clue
     data['number'] = clueNumber
@@ -59,6 +72,7 @@ const SpymasterInput = (props) => {
           number={clueNumber}
           setNumber={setClueNumber}
           className={classes.margin}
+          maxNum={props.maxNum}
         />
         <Button
           variant="contained"

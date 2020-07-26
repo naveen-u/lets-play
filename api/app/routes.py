@@ -2,12 +2,12 @@ from flask import request, jsonify, json, current_app
 from flask_login import current_user, login_user, logout_user
 from flask_socketio import emit
 from app.models import UserData, RoomData
-from app import app, db, socketio, clean_up_methods
+from app import flask_app, db, socketio, clean_up_methods
 import uuid
 import random
 import string
 
-@app.route('/session', methods=['GET', 'POST'])
+@flask_app.route('/session', methods=['GET', 'POST'])
 def session_access():
     """
     Stores/sends session data and logs users in and out. Also creates a

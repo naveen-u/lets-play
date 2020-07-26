@@ -14,20 +14,20 @@ logging.basicConfig(format='%(asctime)s | %(name)s %(funcName)s | %(message)s', 
 socketio = SocketIO(manage_session=False, cors_allowed_origins='*')
 login = LoginManager()
 
-app = Flask(__name__, instance_relative_config=True)
-app.config.from_object(Config)
-app.config.from_pyfile('config.py')
+flask_app = Flask(__name__, instance_relative_config=True)
+flask_app.config.from_object(Config)
+flask_app.config.from_pyfile('config.py')
 
-db = SQLAlchemy(app)
-migrate = Migrate(app, db, render_as_batch=True)
-login.init_app(app)
+db = SQLAlchemy(flask_app)
+migrate = Migrate(flask_app, db, render_as_batch=True)
+login.init_app(flask_app)
 
 scheduler = BackgroundScheduler({'apscheduler.timezone': 'Asia/Calcutta'})
 scheduler.start()
 
 socketio_logger = logging.getLogger('socketio')
 engineio_logger = logging.getLogger('engineio')
-socketio.init_app(app)
+socketio.init_app(flask_app)
 
 # List of methods to be called on logout.
 clean_up_methods = []

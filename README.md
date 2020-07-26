@@ -1,68 +1,95 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Let's Play!
 
-## Available Scripts
+**Let's Play!** is a web application which allows groups of users to play a variety games together.
 
-In the project directory, you can run:
+![Let's Play](https://user-images.githubusercontent.com/29832401/88479035-1a1fdc00-cf6a-11ea-849f-8ade8cdc8c46.png)
 
-### `yarn start`
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Prerequisites
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+You'll need the following to get a development instance of **Let's Play!** up and running locally.
 
-### `yarn test`
+- Python 3
+- pip3
+- NodeJS 10
+- Yarn
+- This repo: `git clone https://github.com/naveen-u/lets-play.git`
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Installation
 
-### `yarn build`
+Follow these steps to get a development instance up and running.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Setting up the front-end
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+1) Install dependencies:
+```bash
+yarn
+```
+2) Start the development server:
+```bash
+yarn start
+```
+This will serve the front-end of the webapp from localhost:3000.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Setting up the back-end
 
-### `yarn eject`
+The backend resides in the `api` directory. Move to that directory: `cd api`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+1) Create a virtual environment:
+```bash
+python3 -m venv venv
+```
+>*Note:* The name of the virtual environment does not necessarily have to be `venv`. However, the `start-api` command inside `package.json` would have to be changed accordingly for that command to work.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+2) Install the required python packages:
+```bash
+pip3 install -r requirements.txt
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+3) Set flask environment variables. Instead of setting them manually each time, a `.flaskenv` file can be created with the required variables. The following environment variables are required by flask:
+```
+FLASK_APP=run.py
+FLASK_ENV=development
+```
+>*Note:* Flask automatically looks for this file (if the python-dotenv package is present) and loads the environment variables specified here. The `FLASK_APP` variable tells flask which file the flask app is initialised in, and setting `FLASK_ENV` to development enables debug mode. `flask run` will use the interactive debugger and reloader by default in debug mode.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+4) Set instance-specific flask configurations. Create an `instance` folder, and within it, a `config.py` file:
+```bash
+mkdir instance
+cd instance
+touch config.py
+```
+Set a `SECRET_KEY` variable inside `config.py`. For example: `SECRET_KEY = 'some random character string'`. 
+>*Note:* The configurations in this file override the configurations in `api/config.py`, but is not intended to be pushed to version control or production. Use this to store API keys and configurations specific to the development environment.
 
-## Learn More
+5) Create the database inside the `api` directoy. **Let's Play!** uses an SQLite database, with `flask-sqlalchemy` as an ORM, and `flask-migrate` to perform database migrations. Hence, the database can easily be set up locally by running the following:
+```
+source venv/bin/activate    # Activate the virtual environment
+flask db upgrade
+```
+>*Note:* Some games might require some data in the database to function correctly. However, the platform itself stores data only when users and rooms are active, and this data gets deleted when users leave their room. Therefore, to develop a new game for the application, this setup would suffice.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+6) Start the development server:
+```
+yarn start-api
+```
+This will start the flask development server, and it will listen to requests on port 5000. All requests sent to the front-end that cannot be resolved are forwarded to the back-end.
+>*Note:* The `yarn start-api` command internally calls `flask run` from within the virtual environment. As mentioned in step 1, this command will have to be edited in `package.json` if the virtual environment is named something other than `venv`.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Features
+The platform offers the following features:
+- Room setup
+  - Users can either create a new room or join existing rooms.
+  - Rooms provide options to copy the code for that room, using which users can invite other users to join the room.
+- Chat
+  - A reusable chat component which can be included in games if and when required.
 
-### Code Splitting
+## Games
+- Codenames
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
 
-### Analyzing the Bundle Size
+## Contributing
+Pull requests are welcome. For major changes or  for adding new games, please open an issue first to discuss what you would like to change or what game you would like to implement.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+## License
+[MIT](https://choosealicense.com/licenses/mit/)

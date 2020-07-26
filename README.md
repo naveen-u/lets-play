@@ -13,6 +13,7 @@ You'll need the following to get a development instance of **Let's Play!** up an
 - pip3
 - NodeJS 10
 - Yarn
+- Virtualenv
 - This repo: `git clone https://github.com/naveen-u/lets-play.git`
 
 ## Installation
@@ -25,6 +26,8 @@ Follow these steps to get a development instance up and running.
 ```bash
 yarn
 ```
+This helps `yarn` configure dependencies. This must be run before starting the developement server.
+
 2) Start the development server:
 ```bash
 yarn start
@@ -37,7 +40,7 @@ The backend resides in the `api` directory. Move to that directory: `cd api`
 
 1) Create a virtual environment:
 ```bash
-python3 -m venv venv
+virtualenv venv
 ```
 >*Note:* The name of the virtual environment does not necessarily have to be `venv`. However, the `start-api` command inside `package.json` would have to be changed accordingly for that command to work.
 
@@ -62,11 +65,13 @@ touch config.py
 Set a `SECRET_KEY` variable inside `config.py`. For example: `SECRET_KEY = 'some random character string'`. 
 >*Note:* The configurations in this file override the configurations in `api/config.py`, but is not intended to be pushed to version control or production. Use this to store API keys and configurations specific to the development environment.
 
-5) Create the database inside the `api` directoy. **Let's Play!** uses an SQLite database, with `flask-sqlalchemy` as an ORM, and `flask-migrate` to perform database migrations. Hence, the database can easily be set up locally by running the following:
+5) Create the database inside the `api` directory. **Let's Play!** uses an SQLite database, with `flask-sqlalchemy` as an ORM, and `flask-migrate` to perform database migrations. Hence, the database can easily be set up locally by running the following:
 ```
 source venv/bin/activate    # Activate the virtual environment
 flask db upgrade
 ```
+Incase there are any error with the above, ensure that you are in the `api` directory, and deactivate and reactivate your virtual environment.
+
 >*Note:* Some games might require some data in the database to function correctly. However, the platform itself stores data only when users and rooms are active, and this data gets deleted when users leave their room. Therefore, to develop a new game for the application, this setup would suffice.
 
 6) Start the development server:
@@ -85,7 +90,7 @@ The platform offers the following features:
   - A reusable chat component which can be included in games if and when required.
 
 ## Games
-- Codenames
+- Codenames (See wiki for more details on the rules. To be uploaded soon)
 
 
 ## Contributing

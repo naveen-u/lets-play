@@ -389,6 +389,36 @@ class Codenames(Namespace):
         elif grid[index] == 'B':
             data['blueLeft'] = CodenamesTeams.query.filter_by(room=room, team_name=TEAMS.BLUE).first().words_left
         emit('game_data', data, room=current_user.room_id)
+
+    def on_pass(self):
+        """
+        Handles the pass event. This is fired when a player clicks on the pass option during
+        their team's turn.
+        """
+        # Check if user is authenticated and playing the game
+        if not current_user.is_authenticated or current_user.codenames_player is None:
+            return
+        # Check that user is not a spymaster
+        team = current_user.codenames_player.team 
+        if team.spymaster_player == current_user.codenames_player:
+            return
+        # Check game state
+        room = current_user.room.codenames_room
+        if not ((room.state == STATES.BLUE_PLAYER and team.team_name == TEAMS.BLUE ) or \
+                (room.state == STATES.RED_PLAYER and team.team_name == TEAMS.RED )):
+            return
+        if room.turns_left <= 0:
+            return
+        room.turns_left = 0
+        if room.state == STATES.BLUE_PLAYER:
+            room.state = STATES.RED_SPYMASTER
+        elif room.state == STATES.RED_PLAYER:
+            room.state = STATES.BLUE_SPYMASTER
+        db.session.commit()
+        data = {}
+        data['state'] = room.state
+        data['turns'] = room.turns_left
+        emit('game_data', data, room=current_user.room_id)
     
     def on_restart_with_same_teams(self):
         """

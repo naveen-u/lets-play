@@ -34,10 +34,10 @@ const useStyles = makeStyles((theme) => ({
   },
   clickable: {
     '&:hover': {
-      cursor: props => props.isSpymaster || !props.playerTurn ? '' : 'pointer',
+      cursor: props => props.playerTurn ? 'pointer' : '',
       position: 'relative',
-      zIndex: props => props.isSpymaster || !props.playerTurn  ? '' : 2,
-      boxShadow: props => props.isSpymaster || !props.playerTurn  ? '' : '0px 0px 5px 5px #000000',
+      zIndex: props => props.playerTurn  ? 2 : '',
+      boxShadow: props => props.playerTurn  ? '0px 0px 5px 5px #000000' : '',
     },
   },
   notch: {
@@ -70,7 +70,7 @@ const WordGrid = (props) => {
   }
 
   const generateOnClickMethod = (i,j) => {
-    if (props.playerTurn && !props.isSpymaster && !['R', 'B', 'N', 'A'].includes(props.words[i*5+j])) {
+    if (props.playerTurn && !['R', 'B', 'N', 'A'].includes(props.words[i*5+j])) {
       return (() => handleClick(i*5+j));
     }
   }

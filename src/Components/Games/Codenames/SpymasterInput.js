@@ -55,34 +55,32 @@ const SpymasterInput = (props) => {
 
   return(
     <Grid item>
-      <form noValidate autoComplete="off" >
-        <TextField
-          id="clue"
-          label="Clue Word"
-          variant="outlined"
-          color={props.themeColor}
-          value={clue}
-          required
-          error={clueError !== ""}
-          helperText={clueError}
-          onChange={changeClue}
-          className={classes.margin}
-        />
-        <NumberPicker 
-          number={clueNumber}
-          setNumber={setClueNumber}
-          className={classes.margin}
-          maxNum={props.maxNum}
-        />
-        <Button
-          variant="contained"
-          onClick={sendClue}
-          color={props.themeColor}
-          className={classes.margin}
-        >
-          Submit
-        </Button>
-      </form>
+      <TextField
+        id="clue"
+        label="Clue Word"
+        variant="outlined"
+        color={props.themeColor}
+        value={clue}
+        required
+        error={clueError !== ""}
+        helperText={clueError}
+        onChange={changeClue}
+        className={classes.margin}
+      />
+      <NumberPicker
+        number={clueNumber}
+        setNumber={setClueNumber}
+        className={classes.margin}
+        maxNum={props.maxNum}
+      />
+      <Button
+        variant="contained"
+        onClick={sendClue}
+        color={props.themeColor}
+        className={classes.margin}
+      >
+        Submit
+      </Button>
     </Grid>
   );
 }

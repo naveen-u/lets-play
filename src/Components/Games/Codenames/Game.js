@@ -13,11 +13,18 @@ import PlayerList from './PlayerList';
 
 const useStyles = makeStyles((theme) => ({
   clue: {
+    borderWidth: "2px",
+    borderRadius: 16,
+    borderColor: ({currentColor}) => currentColor,
+    overflow: "hidden",
+    '&:hover': {
+      borderColor: 'White',
+    },
+    pointerEvents: 'none',
+  },
+  clueText: {
     height: 56,
     minWidth: 227,
-    borderWidth: "2px",
-    borderRadius: "8px",
-    borderColor: ({currentColor}) => currentColor,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -26,6 +33,18 @@ const useStyles = makeStyles((theme) => ({
   endGameButton: {
     width: 275,
     margin: theme.spacing(0,2),
+  },
+  passButton: {
+    color: "White",
+    backgroundColor: ({currentColor}) => currentColor,
+    borderRadius: 0,
+    pointerEvents: "auto",
+    padding: theme.spacing(2),
+    "&:hover": {
+      backgroundColor: "White",
+      color: "Black",
+      cursor: props => props.playerTurn ? 'pointer' : '',
+    },
   }
 }));
 
@@ -76,8 +95,8 @@ const Game = (props) => {
   const currentColor = props.gameState === STATES.BLUE_PLAYER ? 'DeepSkyBlue':
                        props.gameState === STATES.RED_PLAYER ? 'FireBrick' : 'Grey';
 
-  const playerTurn = props.gameState === STATES.BLUE_PLAYER && props.currentTeam === TEAMS.BLUE ||
-                     props.gameState === STATES.RED_PLAYER && props.currentTeam === TEAMS.RED
+  const playerTurn = (props.gameState === STATES.BLUE_PLAYER && props.currentTeam === TEAMS.BLUE ||
+                     props.gameState === STATES.RED_PLAYER && props.currentTeam === TEAMS.RED) && !isSpymaster;
   
   const spymasterTurn = props.gameState === STATES.BLUE_SPYMASTER && props.currentTeam === TEAMS.BLUE && isSpymaster ||
                         props.gameState === STATES.RED_SPYMASTER && props.currentTeam === TEAMS.RED && isSpymaster;
@@ -86,7 +105,7 @@ const Game = (props) => {
 
   const currentTeamLeft = props.currentTeam === TEAMS.BLUE ? blueLeft : redLeft;
 
-  const classes = useStyles({currentColor});
+  const classes = useStyles({currentColor, playerTurn});
 
   const sameTeams = () => {
     props.socket.emit('restart_with_same_teams');
@@ -94,6 +113,10 @@ const Game = (props) => {
 
   const restart = () => {
     props.socket.emit('restart');
+  }
+
+  const handlePass = () => {
+    props.socket.emit('pass');
   }
 
   return (
@@ -124,16 +147,28 @@ const Game = (props) => {
           />
           :
           <Grid item>
-            <Box className={classes.clue} border={1} display="block" component="div">
-              {props.gameState === STATES.BLUE_PLAYER || props.gameState === STATES.RED_PLAYER ?
-                <Typography>
-                {clue.toString().toUpperCase()}
+            <Box className={classes.clue} border={1} display="flex" direction="row" width="100%">
+              <Box className={classes.clueText} display="block" component="div">
+                {props.gameState === STATES.BLUE_PLAYER || props.gameState === STATES.RED_PLAYER ?
+                  <Typography>
+                  {clue.toString().toUpperCase()}
+                  </Typography>
+                  :
+                  <Typography color="textSecondary">
+                    Waiting for spymaster...
+                  </Typography>
+                }
+              </Box>
+              {playerTurn ?
+              <Box
+                onClick={handlePass}
+                className={classes.passButton}
+              >
+                <Typography variant="button">
+                Pass
                 </Typography>
-                :
-                <Typography color="textSecondary">
-                  Waiting for spymaster...
-                </Typography>
-              }
+              </Box>
+              : ''}
             </Box>
           </Grid>
         :
@@ -167,7 +202,7 @@ const Game = (props) => {
             </Button>
             </Box>
           :
-          <Box className={classes.clue} border={1} display="block" component="div">
+          <Box className={`${classes.clueText} ${classes.clue}`} border={1} display="block" component="div">
             <Typography color="textSecondary">
               Waiting for room admin to start next game...
             </Typography>

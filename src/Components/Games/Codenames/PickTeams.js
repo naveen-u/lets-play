@@ -5,6 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
+import Instructions from './Instructions';
 import TeamCard from './TeamCard';
 import { TEAMS } from './Constants';
 
@@ -55,6 +56,7 @@ const PickTeams = (props) => {
 
   return(
       <Box height="100%" width="100%" display="flex" flexDirection="column" justifyContent="center" alignItems="center">
+        <Instructions />
         <Typography variant="overline" align="center" color="textSecondary" className={classes.headerText}>
           Split into two teams.
         </Typography>

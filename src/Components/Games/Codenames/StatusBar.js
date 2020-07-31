@@ -6,9 +6,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
-import WordGrid from './WordGrid';
-import { TEAMS, STATES, CONSTANTS } from './Constants';
-import SpymasterInput from './SpymasterInput';
+import Instructions from './Instructions';
+import { TEAMS, CONSTANTS } from './Constants';
 
 const useStyles = makeStyles((theme) => ({
   turnBox: {
@@ -67,7 +66,7 @@ const StatusBar = (props) => {
                    '';
 
   return (
-    <Grid item container direction="row">
+    <Grid item container direction="row" alignItems="center">
       {!props.gameOver ? 
         <>
           <Tooltip title="Words left">
@@ -80,6 +79,8 @@ const StatusBar = (props) => {
               </Avatar>
             </Box>
           </Tooltip>
+          <div style={{'flexGrow':1}} />
+          <Instructions />
           <div style={{'flexGrow':1}} />
           <Box border={1} className={classes.turnBox}>
             <Typography variant="button" className={classes.margin}>

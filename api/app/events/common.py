@@ -1,9 +1,11 @@
+"""
+This module contains the socketio event handler for the global namespace.
+"""
+
 import datetime
 import logging
 
 from flask import request
-from flask_migrate import current
-from flask_socketio import emit
 from flask_login import current_user
 
 from app import socketio, scheduler, db, flask_app
@@ -12,18 +14,20 @@ from app.routes import clean_up_methods
 
 log = logging.getLogger(__name__)
 
-@socketio.on('connect')
+
+@socketio.on("connect")
 def handle_connect():
     """
     Handles the global connect event. If the user is already present, the socket ID of
     the user is updated.
     """
     if current_user.is_authenticated:
-        log.info('Existing user. Updating socket ID.')
+        log.info("Existing user. Updating socket ID.")
         current_user.sid = request.sid
         db.session.commit()
 
-@socketio.on('disconnecting')
+
+@socketio.on("disconnecting")
 def handle_disconnecting():
     """
     Handles the disconnecting event. This event is fired before the window unloads.
@@ -32,33 +36,39 @@ def handle_disconnecting():
     """
     if current_user.is_authenticated:
         scheduler.add_job(
-            cleanup, 
-            trigger='date',
+            cleanup,
+            trigger="date",
             args=[current_user.sid],
-            next_run_time=(datetime.datetime.now() + datetime.timedelta(seconds=10))
+            next_run_time=(datetime.datetime.now() + datetime.timedelta(seconds=10)),
         )
+
 
 def cleanup(socket_id):
     """
-    Performs clean-up.
+    Performs cleanup after a user leaves.
+
+    Args:
+        socket_id (str): Socket ID that was disconnected
     """
-    current_user = UserData.query.filter_by(sid=socket_id).first()
-    if current_user is not None:
-        log.info('Got user for disconnected socket. Performing cleanup.')
+    leaving_user = UserData.query.filter_by(sid=socket_id).first()
+    if leaving_user is not None:
+        log.info("Got user for disconnected socket. Performing cleanup.")
         with flask_app.app_context():
             for func in clean_up_methods:
-                func(current_user)
-            room = current_user.room
-            if room.admin == current_user:
-                new_admin = UserData.query.filter(UserData.room_id == room.id, UserData.id != current_user.id).first()
+                func(leaving_user)
+            room = leaving_user.room
+            if room.admin == leaving_user:
+                new_admin = UserData.query.filter(
+                    UserData.room_id == room.id, UserData.id != leaving_user.id
+                ).first()
                 if new_admin is not None:
                     room.admin = new_admin
-                    socketio.emit('set_admin', True, room=new_admin.sid)
-            db.session.delete(current_user)
+                    socketio.emit("set_admin", True, room=new_admin.sid)
+            db.session.delete(leaving_user)
             db.session.commit()
             if not room.users:
                 db.session.delete(room)
                 db.session.commit()
 
     else:
-        log.info('Did not recieve user data for socket ID. User possibly reconnected.')
+        log.info("Did not recieve user data for socket ID. User possibly reconnected.")

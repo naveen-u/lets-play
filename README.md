@@ -70,9 +70,11 @@ Set a `SECRET_KEY` variable inside `config.py`. For example: `SECRET_KEY = 'some
 source venv/bin/activate    # Activate the virtual environment
 flask db upgrade
 ```
-Incase there are any error with the above, ensure that you are in the `api` directory, and deactivate and reactivate your virtual environment.
+In case there are any errors with the above, ensure that you are in the `api` directory, and that your virtual environment is active.
 
->*Note:* Some games might require some data in the database to function correctly. However, the platform itself stores data only when users and rooms are active, and this data gets deleted when users leave their room. Therefore, to develop a new game for the application, this setup would suffice.
+>*Note:* Some games might require some data in the database to function correctly. However, the platform itself stores data only when users and rooms are active, and this data gets deleted when users leave their room. Therefore, to develop a new game for the application, this setup would suffice. If you wish to run the games, follow the optional step below.
+
+_Optional_: Populate the data required for the games to function by running `flask tables populate`.
 
 6) Start the development server:
 ```

@@ -3,6 +3,7 @@ The module contains the actual flask application code.
 """
 
 import logging
+import os
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask
@@ -10,10 +11,18 @@ from flask_socketio import SocketIO
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from logging.handlers import RotatingFileHandler
+from flask.logging import default_handler
 
 from config import Config
 
+if not os.path.exists("logs"):
+    os.mkdir("logs")
+
+file_handler = RotatingFileHandler("logs/lets-play.log", maxBytes=10240, backupCount=10)
+
 logging.basicConfig(
+    handlers=[file_handler],
     format="%(asctime)s | %(name)s %(funcName)s | %(message)s",
     datefmt="%m/%d/%Y %I:%M:%S %p",
     level=logging.INFO,
@@ -33,9 +42,11 @@ login.init_app(flask_app)
 scheduler = BackgroundScheduler({"apscheduler.timezone": "Asia/Calcutta"})
 scheduler.start()
 
-socketio_logger = logging.getLogger("socketio")
-engineio_logger = logging.getLogger("engineio")
-socketio.init_app(flask_app)
+socketio.init_app(
+    flask_app,
+    logger=logging.getLogger("socketio"),
+    engineio_logger=logging.getLogger("engineio"),
+)
 
 # List of methods to be called on logout.
 clean_up_methods = []
@@ -50,4 +61,4 @@ def register_clean_up_method(clean_up_method):
     clean_up_methods.append(clean_up_method)
 
 
-from app import routes, events, models
+from app import routes, events, models, commands

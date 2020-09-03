@@ -36,3 +36,6 @@ flask_session
 
 # sqlite database
 app.db
+
+#logs
+logs

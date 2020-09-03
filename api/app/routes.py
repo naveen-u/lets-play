@@ -91,7 +91,9 @@ def add_user_to_existing_room(username, room):
             "room": room,
         }
         response = current_app.response_class(
-            response=json.dumps(response_data), status=400, mimetype="application/json",
+            response=json.dumps(response_data),
+            status=400,
+            mimetype="application/json",
         )
         return response
     response_data = {
@@ -100,7 +102,9 @@ def add_user_to_existing_room(username, room):
         "room": room,
     }
     response = current_app.response_class(
-        response=json.dumps(response_data), status=400, mimetype="application/json",
+        response=json.dumps(response_data),
+        status=400,
+        mimetype="application/json",
     )
     return response
 

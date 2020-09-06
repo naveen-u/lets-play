@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Alert from '@material-ui/lab/Alert';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
@@ -22,33 +22,40 @@ const useStyles = makeStyles((theme) => ({
 const PickTeams = (props) => {
   const classes = useStyles();
 
+  const {
+    socket,
+    setBlueMaster,
+    setRedMaster,
+    setPlayerList,
+  } = props;
+
   useEffect(() => {
     // join_team signifies that a user has joined a team. Update list of players.
-    props.socket.on('join_team', data => {
+    socket.on('join_team', data => {
       if (data.team === TEAMS.NEUTRAL) {
-        props.setBlueMaster(blueMaster => blueMaster?.id === data.id ? '' : blueMaster);
-        props.setRedMaster(redMaster => redMaster?.id === data.id ? '' : redMaster);
+        setBlueMaster(blueMaster => blueMaster?.id === data.id ? '' : blueMaster);
+        setRedMaster(redMaster => redMaster?.id === data.id ? '' : redMaster);
       }
       else if (data.team === TEAMS.BLUE) {
-        props.setRedMaster(redMaster => redMaster?.id === data.id ? '' : redMaster);
+        setRedMaster(redMaster => redMaster?.id === data.id ? '' : redMaster);
       }
       else if (data.team === TEAMS.RED) {
-        props.setBlueMaster(blueMaster => blueMaster?.id === data.id ? '' : blueMaster);
+        setBlueMaster(blueMaster => blueMaster?.id === data.id ? '' : blueMaster);
       }
-      props.setPlayerList(list => list.filter(user => user.id !== data.id));
-      props.setPlayerList(list => list.concat(data));
+      setPlayerList(list => list.filter(user => user.id !== data.id));
+      setPlayerList(list => list.concat(data));
     });
 
     // set a user as spymaster
-    props.socket.on('set_spymaster', data => {
+    socket.on('set_spymaster', data => {
       if (data.team === TEAMS.RED) {
-        props.setRedMaster(data);
+        setRedMaster(data);
       }
       else if (data.team === TEAMS.BLUE) {
-        props.setBlueMaster(data);
+        setBlueMaster(data);
       }
     });
-  }, [props.socket]);
+  }, [socket, setBlueMaster, setRedMaster, setPlayerList]);
 
   const blueTeam = props.playerList.filter(player => player.team === TEAMS.BLUE);
   const redTeam = props.playerList.filter(player => player.team === TEAMS.RED);

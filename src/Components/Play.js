@@ -3,9 +3,6 @@ import { useHistory } from "react-router-dom";
 import io from 'socket.io-client';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Chat from './Chat';
 import Codenames from './Games/Codenames'
 import Navbar from './Navbar/Navbar';
 import { getSession } from '../Utlis';

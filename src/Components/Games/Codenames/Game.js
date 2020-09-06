@@ -9,7 +9,7 @@ import SpymasterInput from './SpymasterInput';
 import StatusBar from './StatusBar';
 import WordGrid from './WordGrid';
 import { TEAMS, STATES } from './Constants';
-import PlayerList from './PlayerList';
+
 
 const useStyles = makeStyles((theme) => ({
   clue: {
@@ -85,21 +85,21 @@ const Game = (props) => {
         setDetails(data.details);
       }
     });
-  }, [props.socket]);
+  }, [props, props.socket]);
 
-  const isSpymaster = props.currentTeam === TEAMS.BLUE && props.blueMaster.id === props.userId ||
-                      props.currentTeam === TEAMS.RED && props.redMaster.id === props.userId;
+  const isSpymaster = (props.currentTeam === TEAMS.BLUE && props.blueMaster.id === props.userId) ||
+                      (props.currentTeam === TEAMS.RED && props.redMaster.id === props.userId);
   
   const themeColor = props.currentTeam === TEAMS.BLUE ? 'primary' : 'secondary';
 
   const currentColor = props.gameState === STATES.BLUE_PLAYER ? 'DeepSkyBlue':
                        props.gameState === STATES.RED_PLAYER ? 'FireBrick' : 'Grey';
 
-  const playerTurn = (props.gameState === STATES.BLUE_PLAYER && props.currentTeam === TEAMS.BLUE ||
-                     props.gameState === STATES.RED_PLAYER && props.currentTeam === TEAMS.RED) && !isSpymaster;
+  const playerTurn = ((props.gameState === STATES.BLUE_PLAYER && props.currentTeam === TEAMS.BLUE) ||
+                     (props.gameState === STATES.RED_PLAYER && props.currentTeam === TEAMS.RED)) && !isSpymaster;
   
-  const spymasterTurn = props.gameState === STATES.BLUE_SPYMASTER && props.currentTeam === TEAMS.BLUE && isSpymaster ||
-                        props.gameState === STATES.RED_SPYMASTER && props.currentTeam === TEAMS.RED && isSpymaster;
+  const spymasterTurn = isSpymaster && ((props.gameState === STATES.BLUE_SPYMASTER && props.currentTeam === TEAMS.BLUE) ||
+                        (props.gameState === STATES.RED_SPYMASTER && props.currentTeam === TEAMS.RED));
   
   const gameOver = props.gameState === STATES.GAME_OVER;
 

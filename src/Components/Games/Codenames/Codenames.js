@@ -66,7 +66,7 @@ const Codenames = (props) => {
 
   const ongoing = !(gameState === STATES.JOIN || gameState === STATES.BLUE_READY || gameState === STATES.RED_READY);
 
-  const teamChatEnabled = ongoing && (currentTeam === TEAMS.BLUE && blueMaster.id !== props.userId || currentTeam === TEAMS.RED && redMaster.id !== props.userId)
+  const teamChatEnabled = ongoing && ((currentTeam === TEAMS.BLUE && blueMaster.id !== props.userId) || (currentTeam === TEAMS.RED && redMaster.id !== props.userId))
 
   return(
     <Grid container component="main">

@@ -44,8 +44,6 @@ function InstructionText() {
 }
 
 function Text() {
-  const classes = useStyles();
-
   return (
     <>
       Codenames is a game of guessing which codenames (i.e., words) in a set are related to a hint-word given by another player.<br/><br/>

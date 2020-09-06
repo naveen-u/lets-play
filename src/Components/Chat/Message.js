@@ -7,7 +7,6 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme) => ({  
   message: {
     maxWidth: '90%',
-    // display: "flex", 
     border: "0.5px",
     borderRadius: "20px",
     borderBottomLeftRadius: "0px",
@@ -18,8 +17,7 @@ const useStyles = makeStyles((theme) => ({
     wordWrap: "break-word",
   },
   messageFromMe: {
-    maxWidth: '90%',
-    // display: "flex", 
+    maxWidth: '90%', 
     border: "0.5px",
     borderRadius: "20px",
     borderBottomRightRadius: "0px",

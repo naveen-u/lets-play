@@ -19,7 +19,9 @@ from config import Config
 if not os.path.exists("logs"):
     os.mkdir("logs")
 
-file_handler = RotatingFileHandler("logs/lets-play.log", maxBytes=10240, backupCount=10)
+file_handler = RotatingFileHandler(
+    "logs/lets-play.log", maxBytes=102400, backupCount=10
+)
 
 logging.basicConfig(
     handlers=[file_handler],

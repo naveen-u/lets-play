@@ -1,3 +1,3 @@
-import Codenames from './Codenames';
+import Codenames from "./Codenames";
 
 export default Codenames;

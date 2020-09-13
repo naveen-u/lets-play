@@ -71,15 +71,14 @@ const PickTeams = (props) => {
           <Grid container justify="center" spacing={4} alignItems="center">
             <Grid item>
 
-              <TeamCard 
-              team={TEAMS.BLUE} 
-              list={blueTeam} 
+              <TeamCard
+              team={TEAMS.BLUE}
+              list={blueTeam}
               spymaster={props.blueMaster}
               percentOfMembers={Math.min((blueTeam.length)/(props.playerList.length)*200,100)}
               socket={props.socket}
               currentTeam={props.currentTeam}
               setCurrentTeam={props.setCurrentTeam}
-              userId={props.userId}
               ready={props.blueTeamReady}
               allowReady={allowReady}
               />
@@ -95,7 +94,6 @@ const PickTeams = (props) => {
               socket={props.socket}
               currentTeam={props.currentTeam}
               setCurrentTeam={props.setCurrentTeam}
-              userId={props.userId}
               ready={props.redTeamReady}
               allowReady={allowReady}
               />
@@ -104,7 +102,7 @@ const PickTeams = (props) => {
           </Grid>
         </Box>
         {blueTeam.length > redTeam.length + 1 ?
-        <Alert 
+        <Alert
           variant="outlined"
           severity="warning"
           className={classes.teamImbalancedAlert}
@@ -112,7 +110,7 @@ const PickTeams = (props) => {
           Blue team has way too many players. Someone's gotta join the Reds.
         </Alert>
         : redTeam.length > blueTeam.length + 1 ?
-        <Alert 
+        <Alert
           variant="outlined"
           severity="warning"
           className={classes.teamImbalancedAlert}

@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useState } from "react";
+import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
+import TextField from "@material-ui/core/TextField";
+import { makeStyles } from "@material-ui/core/styles";
 
-import NumberPicker from './NumberPicker';
+import NumberPicker from "./NumberPicker";
 
 const useStyles = makeStyles((theme) => ({
   margin: {
@@ -15,45 +15,44 @@ const useStyles = makeStyles((theme) => ({
 const SpymasterInput = (props) => {
   const classes = useStyles();
 
-  const [clue, setClue] = useState('');
+  const [clue, setClue] = useState("");
   const [clueNumber, setClueNumber] = useState(1);
-  const [clueError, setClueError] = useState('');
+  const [clueError, setClueError] = useState("");
 
   const changeClue = (event) => {
     if (/^[a-z]*$/i.test(event.target.value)) {
       setClue(event.target.value);
-      setClueError('');
+      setClueError("");
+    } else {
+      setClueError("The clue has to be a single word");
     }
-    else {
-      setClueError('The clue has to be a single word');
-    }
-  }
+  };
 
   const sendClue = () => {
-    if (clue === '') {
-      setClueError('You can\'t not give a clue!');
-      return
+    if (clue === "") {
+      setClueError("You can't not give a clue!");
+      return;
     }
     const isSubstring = (word) => {
-      if (['R', 'B', 'N', 'A'].includes(word)) {
+      if (["R", "B", "N", "A"].includes(word)) {
         return false;
       }
       if (clue.toLowerCase().includes(word.toLowerCase())) {
-        setClueError('The clue cannot contain any codewords!');
+        setClueError("The clue cannot contain any codewords!");
         return true;
       }
       return false;
-    }
+    };
     if (props.words.some(isSubstring)) {
-      return
+      return;
     }
-    const data = {}
-    data['clue'] = clue
-    data['number'] = clueNumber
-    props.socket.emit('clue', data);
-  }
+    const data = {};
+    data["clue"] = clue;
+    data["number"] = clueNumber;
+    props.socket.emit("clue", data);
+  };
 
-  return(
+  return (
     <Grid item>
       <TextField
         id="clue"
@@ -83,6 +82,6 @@ const SpymasterInput = (props) => {
       </Button>
     </Grid>
   );
-}
+};
 
 export default SpymasterInput;

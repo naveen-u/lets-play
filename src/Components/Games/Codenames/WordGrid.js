@@ -1,8 +1,8 @@
-import React from 'react';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import React from "react";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   wordBox: {
@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   wordRow: {
-    display: 'flex',
+    display: "flex",
     textAlign: "center",
   },
   grid: {
@@ -30,14 +30,14 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     position: "relative",
     wordWrap: "break-word",
-    opacity: props => props.gameOver ? 0.6 : 1,
+    opacity: (props) => (props.gameOver ? 0.6 : 1),
   },
   clickable: {
-    '&:hover': {
-      cursor: props => props.playerTurn ? 'pointer' : '',
-      position: 'relative',
-      zIndex: props => props.playerTurn  ? 2 : '',
-      boxShadow: props => props.playerTurn  ? '0px 0px 5px 5px #000000' : '',
+    "&:hover": {
+      cursor: (props) => (props.playerTurn ? "pointer" : ""),
+      position: "relative",
+      zIndex: (props) => (props.playerTurn ? 2 : ""),
+      boxShadow: (props) => (props.playerTurn ? "0px 0px 5px 5px #000000" : ""),
     },
   },
   notch: {
@@ -49,16 +49,16 @@ const useStyles = makeStyles((theme) => ({
     bottom: 10,
   },
   B: {
-    backgroundColor: 'DeepSkyBlue',
+    backgroundColor: "DeepSkyBlue",
   },
   R: {
-    backgroundColor: 'FireBrick',
+    backgroundColor: "FireBrick",
   },
   N: {
-    backgroundColor: 'Beige',
+    backgroundColor: "Beige",
   },
   A: {
-    backgroundColor: 'Black',
+    backgroundColor: "Black",
   },
 }));
 
@@ -66,53 +66,70 @@ const WordGrid = (props) => {
   const classes = useStyles(props);
 
   const handleClick = (i) => {
-    props.socket.emit('word_click', i);
-  }
+    props.socket.emit("word_click", i);
+  };
 
-  const generateOnClickMethod = (i,j) => {
-    if (props.playerTurn && !['R', 'B', 'N', 'A'].includes(props.words[i*5+j])) {
-      return (() => handleClick(i*5+j));
+  const generateOnClickMethod = (i, j) => {
+    if (
+      props.playerTurn &&
+      !["R", "B", "N", "A"].includes(props.words[i * 5 + j])
+    ) {
+      return () => handleClick(i * 5 + j);
     }
-  }
+  };
 
-  const wordRows = []
+  const wordRows = [];
 
-  for (let i=0; i<5; ++i) {
-    const wordRow = []
-    for (let j=0; j<5; ++j) {
+  for (let i = 0; i < 5; ++i) {
+    const wordRow = [];
+    for (let j = 0; j < 5; ++j) {
       wordRow.push(
-        <Grid item xs={2} key={i*5+j} className={classes.wordBox} onClick={generateOnClickMethod(i,j)}>
-            <Paper
-              square
-              className={`${classes.paper} ${['R', 'B', 'N', 'A'].includes(props.words[i*5+j]) ? classes[props.words[i*5+j]] : classes.clickable}`}
-              elevation={3}
-            >
-              {['R', 'B', 'N', 'A'].includes(props.words[i*5+j]) ? '' :
-                <Typography className={classes.word} variant="body2" >
-                  {props.words[i*5+j]}
-                </Typography>
-              }
-              {props.isSpymaster ? 
-                <span className={`${classes.notch} ${classes[props.grid[i*5+j]]}`} />
-                : ''
-              }
-            </Paper>
+        <Grid
+          item
+          xs={2}
+          key={i * 5 + j}
+          className={classes.wordBox}
+          onClick={generateOnClickMethod(i, j)}
+        >
+          <Paper
+            square
+            className={`${classes.paper} ${
+              ["R", "B", "N", "A"].includes(props.words[i * 5 + j])
+                ? classes[props.words[i * 5 + j]]
+                : classes.clickable
+            }`}
+            elevation={3}
+          >
+            {["R", "B", "N", "A"].includes(props.words[i * 5 + j]) ? (
+              ""
+            ) : (
+              <Typography className={classes.word} variant="body2">
+                {props.words[i * 5 + j]}
+              </Typography>
+            )}
+            {props.isSpymaster ? (
+              <span
+                className={`${classes.notch} ${classes[props.grid[i * 5 + j]]}`}
+              />
+            ) : (
+              ""
+            )}
+          </Paper>
         </Grid>
       );
     }
     wordRows.push(
-      <Grid container key={`row${i}`} justify="center"  alignItems="center">
+      <Grid container key={`row${i}`} justify="center" alignItems="center">
         {wordRow}
       </Grid>
     );
   }
 
-
   return (
-    <Grid item container  alignItems="center" justify="center">
+    <Grid item container alignItems="center" justify="center">
       {wordRows}
     </Grid>
   );
-}
+};
 
 export default WordGrid;

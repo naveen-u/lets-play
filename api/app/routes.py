@@ -2,11 +2,13 @@
 This module contains the session route for login and logout.
 """
 
+from os import stat
 import random
 import string
 import uuid
 
 from flask import request, jsonify, json, current_app
+from flask.signals import Namespace
 from flask_login import current_user, login_user, logout_user
 from app.models import UserData, RoomData
 from app import flask_app, db, socketio, clean_up_methods
@@ -58,10 +60,14 @@ def get_session():
     if current_user.is_authenticated:
         return jsonify(
             {
-                "user": current_user.username,
-                "room": current_user.room_id,
-                "id": current_user.id,
-                "admin": current_user.admin_of is not None,
+                "username": current_user.username,
+                "userId": current_user.id,
+                "roomId": current_user.room_id,
+                "roomAdmin": current_user.room.admin_id,
+                "userList": [
+                    {"username": user.username, "userId": user.id}
+                    for user in current_user.room.users
+                ],
             }
         )
     return "", 401
@@ -84,6 +90,13 @@ def add_user_to_existing_room(username, room):
             db.session.add(user)
             db.session.commit()
             login_user(user)
+            state_change = {
+                "userList": [
+                    {"username": user.username, "userId": user.id}
+                    for user in user.room.users
+                ],
+            }
+            socketio.emit("set_state", state_change, room=current_user.room_id)
             return "", 204
         response_data = {
             "error": "user",
@@ -137,15 +150,20 @@ def log_user_out(user):
         user (UserData): User to be removed.
     """
     room = user.room
+    state_change = {}
     if room.admin == user:
         new_admin = UserData.query.filter(
             UserData.room_id == room.id, UserData.id != user.id
         ).first()
         if new_admin is not None:
             room.admin = new_admin
-            socketio.emit("set_admin", True, room=new_admin.sid)
+            state_change["roomAdmin"] = new_admin.id
     db.session.delete(user)
     db.session.commit()
+    state_change["userList"] = [
+        {"username": user.username, "userId": user.id} for user in room.users
+    ]
+    socketio.emit("set_state", state_change, room=room.id)
     if not room.users:
         db.session.delete(room)
         db.session.commit()

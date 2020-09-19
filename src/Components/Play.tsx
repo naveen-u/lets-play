@@ -15,7 +15,6 @@ import {
   userListState,
 } from "./store";
 import { IGameState } from "./domain";
-
 const Play = () => {
   const setUsername = useSetRecoilState(usernameState);
   const setUserId = useSetRecoilState(userIdState);

@@ -38,7 +38,7 @@ const Login = () => {
 
   useEffect(() => {
     // Checking if user is already logged in. If yes, redirect to room.
-    const redirect = (status, data) => {
+    const redirect = () => {
       history.push("/play");
     };
     getSession(redirect);

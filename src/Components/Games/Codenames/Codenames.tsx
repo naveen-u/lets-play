@@ -10,17 +10,19 @@ import Chat from "../../Chat";
 import Game from "./Game";
 import PickTeams from "./PickTeams";
 import PlayerList from "./PlayerList";
-import { TEAMS, STATES } from "./Constants";
 import { userIdState } from "../../store";
+import { GameStates, IPlayer, ITeamList, Teams } from "./domain";
 
 const socket = io("/codenames", { autoConnect: false });
 
 const Codenames = () => {
-  const [playerList, setPlayerList] = useState([]);
-  const [blueMaster, setBlueMaster] = useState("");
-  const [redMaster, setRedMaster] = useState("");
-  const [currentTeam, setCurrentTeam] = useState(TEAMS.NEUTRAL);
-  const [gameState, setGameState] = useState(null);
+  const [playerList, setPlayerList] = useState([] as IPlayer[]);
+  const [blueMaster, setBlueMaster] = useState(
+    undefined as IPlayer | undefined
+  );
+  const [redMaster, setRedMaster] = useState(undefined as IPlayer | undefined);
+  const [currentTeam, setCurrentTeam] = useState(Teams.NEUTRAL);
+  const [gameState, setGameState] = useState(GameStates.JOIN);
   const userId = useRecoilValue(userIdState);
 
   useEffect(() => {
@@ -29,36 +31,37 @@ const Codenames = () => {
       socket.connect();
     }
 
-    socket.on("game_state", (data) => {
-      // console.log('Got state ', data);
+    socket.on("game_state", (data: GameStates) => {
       setGameState(data);
     });
 
     // team_list event rewrites present team list.
-    socket.on("team_list", (data) => {
+    socket.on("team_list", (data: ITeamList) => {
       if (typeof data.blueSpymaster !== "undefined") {
-        setBlueMaster(data.blueSpymaster || "");
+        setBlueMaster(data.blueSpymaster || undefined);
       }
       if (typeof data.redSpymaster !== "undefined") {
-        setRedMaster(data.redSpymaster || "");
+        setRedMaster(data.redSpymaster || undefined);
       }
-      if (data.currentTeam === TEAMS.BLUE) {
-        setCurrentTeam(TEAMS.BLUE);
-      } else if (data.currentTeam === TEAMS.RED) {
-        setCurrentTeam(TEAMS.RED);
+      if (data.currentTeam === Teams.BLUE) {
+        setCurrentTeam(Teams.BLUE);
+      } else if (data.currentTeam === Teams.RED) {
+        setCurrentTeam(Teams.RED);
       } else {
-        setCurrentTeam(TEAMS.NEUTRAL);
+        setCurrentTeam(Teams.NEUTRAL);
       }
       setPlayerList(data.players);
     });
 
     // leave_game event signifies that a user left the game.
-    socket.on("leave_game", (data) => {
+    socket.on("leave_game", (data: IPlayer) => {
       setPlayerList((list) => list.filter((player) => player.id !== data.id));
       setBlueMaster((blueMaster) =>
-        blueMaster?.id === data.id ? "" : blueMaster
+        blueMaster?.id === data.id ? undefined : blueMaster
       );
-      setRedMaster((redMaster) => (redMaster?.id === data.id ? "" : redMaster));
+      setRedMaster((redMaster) =>
+        redMaster?.id === data.id ? undefined : redMaster
+      );
     });
 
     // Close socket (and leave room) when component unmounts
@@ -68,15 +71,15 @@ const Codenames = () => {
   }, []);
 
   const ongoing = !(
-    gameState === STATES.JOIN ||
-    gameState === STATES.BLUE_READY ||
-    gameState === STATES.RED_READY
+    gameState === GameStates.JOIN ||
+    gameState === GameStates.BLUE_READY ||
+    gameState === GameStates.RED_READY
   );
 
   const teamChatEnabled =
     ongoing &&
-    ((currentTeam === TEAMS.BLUE && blueMaster.id !== userId) ||
-      (currentTeam === TEAMS.RED && redMaster.id !== userId));
+    ((currentTeam === Teams.BLUE && blueMaster?.id !== userId) ||
+      (currentTeam === Teams.RED && redMaster?.id !== userId));
 
   return (
     <Grid container component="main">
@@ -97,8 +100,8 @@ const Codenames = () => {
               gameState={gameState}
               setGameState={setGameState}
               playerList={playerList}
-              blueMaster={blueMaster}
-              redMaster={redMaster}
+              blueMaster={blueMaster!}
+              redMaster={redMaster!}
               currentTeam={currentTeam}
             />
           ) : ongoing === false ? (
@@ -112,8 +115,8 @@ const Codenames = () => {
               setRedMaster={setRedMaster}
               currentTeam={currentTeam}
               setCurrentTeam={setCurrentTeam}
-              blueTeamReady={gameState === STATES.BLUE_READY}
-              redTeamReady={gameState === STATES.RED_READY}
+              blueTeamReady={gameState === GameStates.BLUE_READY}
+              redTeamReady={gameState === GameStates.RED_READY}
             />
           ) : (
             <></>
@@ -121,7 +124,7 @@ const Codenames = () => {
         </Box>
       </Grid>
       <Grid item xs={false} sm={3} md={3} component={Paper}>
-        <Chat teamSocket={teamChatEnabled ? socket : null} />
+        <Chat teamSocket={teamChatEnabled ? socket : undefined} />
       </Grid>
     </Grid>
   );

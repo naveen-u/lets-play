@@ -1,5 +1,12 @@
+import { IGameState, IRequest, IPostResponse } from "../Components/domain";
+
 // GET session details from server
-const getSession = (successCallback = null, failureCallback = null) => {
+const getSession = (
+  successCallback:
+    | ((statusCode: number, data: IGameState) => void)
+    | null = null,
+  failureCallback: ((statusCode: number, data: string) => void) | null = null
+) => {
   const requestOptions = {
     method: "GET",
     headers: { "Content-Type": "application/json" },
@@ -12,24 +19,19 @@ const getSession = (successCallback = null, failureCallback = null) => {
       return Promise.all([statusCode, data]);
     })
     .then(([statusCode, data]) => {
-      if (statusCode === 200 || statusCode === 204) {
+      if (statusCode === 200) {
         if (successCallback !== null) {
-          if (statusCode !== 204) {
-            data = JSON.parse(data);
-          }
-          successCallback(statusCode, data);
+          const parsedData = JSON.parse(data);
+          successCallback(statusCode, parsedData);
         }
-      } else if (
-        typeof failureCallback !== "undefined" &&
-        failureCallback !== null
-      ) {
+      } else if (failureCallback != null) {
         failureCallback(statusCode, data);
       }
     });
 };
 
 // Login or logout
-const postSession = (options) => {
+const postSession = (options: IRequest) => {
   if (!options) options = {};
   const defaultRequestOptions = {
     method: "POST",
@@ -49,14 +51,12 @@ const postSession = (options) => {
       const successCallback = options.successCallback;
       const failureCallback = options.failureCallback;
       if (statusCode === 200 || statusCode === 204) {
-        if (
-          typeof successCallback !== "undefined" &&
-          successCallback !== null
-        ) {
+        if (successCallback != null) {
+          let responseData: IPostResponse | null = null;
           if (statusCode !== 204) {
-            data = JSON.parse(data);
+            responseData = JSON.parse(data);
           }
-          successCallback(statusCode, data);
+          successCallback(statusCode, responseData);
         }
       } else {
         if (

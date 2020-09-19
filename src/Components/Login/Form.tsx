@@ -8,6 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { postSession } from "../../Utils/Commons";
+import { IPostResponse, IRequestOptions, TRequestMethods } from "../domain";
 
 const useStyles = makeStyles((theme) => ({
   paper2: {
@@ -52,7 +53,7 @@ const Form = () => {
     setRoom(queryRoom);
   }, []);
 
-  const handleKeyPressOnNameField = (event) => {
+  const handleKeyPressOnNameField = (event: React.KeyboardEvent) => {
     if (event.key === "Enter") {
       if (room !== "") {
         joinRoom();
@@ -62,7 +63,7 @@ const Form = () => {
     }
   };
 
-  const handleKeyPressOnRoomField = (event) => {
+  const handleKeyPressOnRoomField = (event: React.KeyboardEvent) => {
     if (event.key === "Enter") {
       joinRoom();
     }
@@ -96,17 +97,17 @@ const Form = () => {
       return;
     }
 
-    const requestOptions = {
-      method: "POST",
+    const requestOptions: IRequestOptions = {
+      method: "POST" as TRequestMethods,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user: name, room: room }),
     };
 
-    const successCallback = (statusCode, data) => {
+    const successCallback = () => {
       history.push("/play");
     };
 
-    const failureCallback = (statusCode, data) => {
+    const failureCallback = (statusCode: number, data: string) => {
       if (statusCode === 400) {
         const errorData = JSON.parse(data);
         if (errorData.error === "user") {
@@ -135,24 +136,24 @@ const Form = () => {
     }
 
     const requestOptions = {
-      method: "POST",
+      method: "POST" as TRequestMethods,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user: name }),
     };
 
-    const successCallback = (statusCode, data) => {
-      setRoom(data.room);
-      history.push("/play");
-    };
-
-    const failureCallback = (statusCode, data) => {
-      console.log("ERROR: recieved response ", statusCode, data);
+    const successCallback = (
+      statusCode: number,
+      data: IPostResponse | null
+    ) => {
+      if (data != null) {
+        setRoom(data.room);
+        history.push("/play");
+      }
     };
 
     postSession({
       requestOptions: requestOptions,
       successCallback: successCallback,
-      failureCallback: failureCallback,
     });
   };
 

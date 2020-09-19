@@ -6,7 +6,7 @@ import ListItem from "@material-ui/core/ListItem";
 import Skeleton from "@material-ui/lab/Skeleton";
 import Tooltip from "@material-ui/core/Tooltip";
 import { makeStyles } from "@material-ui/core/styles";
-import { TEAMS } from "./Constants";
+import { IPlayer, Teams } from "./domain";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PlayerList = (props) => {
+const PlayerList = (props: { list: IPlayer[] }) => {
   const classes = useStyles();
 
   const userSkeleton = [];
@@ -54,10 +54,10 @@ const PlayerList = (props) => {
           <ListItem key={i} className={classes.listItem} alignItems="center">
             <Tooltip title={user.user}>
               <Badge
-                color={user.team === TEAMS.RED ? "secondary" : "primary"}
+                color={user.team === Teams.RED ? "secondary" : "primary"}
                 overlap="circle"
                 badgeContent=" "
-                invisible={user.team === TEAMS.NEUTRAL}
+                invisible={user.team === Teams.NEUTRAL}
               >
                 <Avatar
                   alt={user.user}

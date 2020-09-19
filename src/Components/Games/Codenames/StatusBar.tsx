@@ -4,12 +4,21 @@ import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, Theme } from "@material-ui/core/styles";
 
 import Instructions from "./Instructions";
-import { TEAMS, CONSTANTS } from "./Constants";
+import { Teams, PlayerType } from "./domain";
 
-const useStyles = makeStyles((theme) => ({
+interface StatusBarProps {
+  currentColor: string;
+  details: string;
+  gameOver: boolean;
+  blueLeft: number;
+  redLeft: number;
+  turns: number;
+}
+
+const useStyles = makeStyles<Theme, StatusBarProps>((theme) => ({
   turnBox: {
     margin: theme.spacing(0, 4),
     display: "flex",
@@ -50,29 +59,29 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const StatusBar = (props) => {
+const StatusBar = (props: StatusBarProps) => {
   const classes = useStyles(props);
 
   const winMessage =
-    props.details === TEAMS.BLUE
-      ? TEAMS.BLUE + " TEAM WINS!"
-      : props.details === TEAMS.RED
-      ? TEAMS.RED + " TEAM WINS!"
-      : props.details === TEAMS.BLUE + CONSTANTS.SPYMASTER
-      ? TEAMS.BLUE + " SPYMASTER LEFT!"
-      : props.details === TEAMS.RED + CONSTANTS.SPYMASTER
-      ? TEAMS.RED + " SPYMASTER LEFT!"
-      : props.details === TEAMS.BLUE + CONSTANTS.PLAYER
+    props.details === Teams.BLUE
+      ? Teams.BLUE + " TEAM WINS!"
+      : props.details === Teams.RED
+      ? Teams.RED + " TEAM WINS!"
+      : props.details === Teams.BLUE + PlayerType.SPYMASTER
+      ? Teams.BLUE + " SPYMASTER LEFT!"
+      : props.details === Teams.RED + PlayerType.SPYMASTER
+      ? Teams.RED + " SPYMASTER LEFT!"
+      : props.details === Teams.BLUE + PlayerType.PLAYER
       ? "ALL THE BLUE PLAYERS LEFT!"
-      : props.details === TEAMS.RED + CONSTANTS.PLAYER
+      : props.details === Teams.RED + PlayerType.PLAYER
       ? "ALL THE RED PLAYERS LEFT!"
       : "";
 
   const winColor =
-    props.details === TEAMS.BLUE
-      ? TEAMS.BLUE
-      : props.details === TEAMS.RED
-      ? TEAMS.RED
+    props.details === Teams.BLUE
+      ? Teams.BLUE
+      : props.details === Teams.RED
+      ? Teams.RED
       : "";
 
   return (

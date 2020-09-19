@@ -1,5 +1,29 @@
 import { createMuiTheme } from "@material-ui/core";
-import { red, blue, lightBlue, yellow, green } from "@material-ui/core/colors";
+import { blue, lightBlue, yellow, green } from "@material-ui/core/colors";
+
+declare module "@material-ui/core/styles/createPalette" {
+  interface Palette {
+    default: {
+      light: React.CSSProperties["color"];
+      main: React.CSSProperties["color"];
+      dark: React.CSSProperties["color"];
+      logoBg: React.CSSProperties["color"];
+      border: React.CSSProperties["color"];
+      contrastText: React.CSSProperties["color"];
+    };
+  }
+  interface PaletteOptions {
+    default?: {
+      light?: React.CSSProperties["color"];
+      main?: React.CSSProperties["color"];
+      dark?: React.CSSProperties["color"];
+      logoBg?: React.CSSProperties["color"];
+      border?: React.CSSProperties["color"];
+      contrastText?: React.CSSProperties["color"];
+    };
+  }
+}
+
 const white = "#FFF";
 
 const darkTheme = createMuiTheme({
@@ -37,19 +61,11 @@ const darkTheme = createMuiTheme({
       dark: yellow[700],
       contrastText: white,
     },
-    danger: {
-      light: red[300],
-      main: red[500],
-      dark: red[700],
-      contrastText: white,
-    },
     background: {
       paper: "rgb(45, 45, 45)",
       default: "rgb(26, 26, 26)",
-      dark: "rgb(26, 26, 26)",
     },
   },
-  // shadows: ["none"],
   overrides: {
     MuiButton: {
       root: {

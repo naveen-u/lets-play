@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import TextField from "@material-ui/core/TextField";
+import { IChatInputProps } from "./domain";
 
-const ChatInput = (props) => {
+const ChatInput = (props: IChatInputProps) => {
   const [chatInput, setChatInput] = useState("");
 
-  const submitHandler = (event) => {
+  const submitHandler = (event: React.FormEvent) => {
     // Stop the form from refreshing the page on submit
     event.preventDefault();
 
@@ -15,7 +16,7 @@ const ChatInput = (props) => {
     props.onSend(chatInput);
   };
 
-  const textChangeHandler = (event) => {
+  const textChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChatInput(event.target.value);
   };
 

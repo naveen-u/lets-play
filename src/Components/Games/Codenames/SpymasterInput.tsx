@@ -6,20 +6,34 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import NumberPicker from "./NumberPicker";
 
+interface IClue {
+  clue: string;
+  number: number;
+}
+
+interface ISpymasterInputProps {
+  words: string[];
+  socket: SocketIOClient.Socket;
+  themeColor: TThemeColor;
+  maxNum: number;
+}
+
+type TThemeColor = "primary" | "secondary";
+
 const useStyles = makeStyles((theme) => ({
   margin: {
     margin: theme.spacing(1),
   },
 }));
 
-const SpymasterInput = (props) => {
+const SpymasterInput = (props: ISpymasterInputProps) => {
   const classes = useStyles();
 
   const [clue, setClue] = useState("");
   const [clueNumber, setClueNumber] = useState(1);
   const [clueError, setClueError] = useState("");
 
-  const changeClue = (event) => {
+  const changeClue = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (/^[a-z]*$/i.test(event.target.value)) {
       setClue(event.target.value);
       setClueError("");
@@ -33,7 +47,7 @@ const SpymasterInput = (props) => {
       setClueError("You can't not give a clue!");
       return;
     }
-    const isSubstring = (word) => {
+    const isSubstring = (word: string) => {
       if (["R", "B", "N", "A"].includes(word)) {
         return false;
       }
@@ -46,7 +60,7 @@ const SpymasterInput = (props) => {
     if (props.words.some(isSubstring)) {
       return;
     }
-    const data = {};
+    const data = {} as IClue;
     data["clue"] = clue;
     data["number"] = clueNumber;
     props.socket.emit("clue", data);
@@ -69,7 +83,7 @@ const SpymasterInput = (props) => {
       <NumberPicker
         number={clueNumber}
         setNumber={setClueNumber}
-        className={classes.margin}
+        // className={classes.margin}
         maxNum={props.maxNum}
       />
       <Button

@@ -2,9 +2,18 @@ import React from "react";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, Theme } from "@material-ui/core/styles";
 
-const useStyles = makeStyles((theme) => ({
+interface IWordGridProps {
+  socket: SocketIOClient.Socket;
+  gameOver: boolean;
+  playerTurn: boolean;
+  words: string[];
+  grid: string[];
+  isSpymaster: boolean;
+}
+
+const useStyles = makeStyles<Theme, IWordGridProps>({
   wordBox: {
     textAlign: "center",
   },
@@ -60,16 +69,16 @@ const useStyles = makeStyles((theme) => ({
   A: {
     backgroundColor: "Black",
   },
-}));
+});
 
-const WordGrid = (props) => {
+const WordGrid = (props: IWordGridProps) => {
   const classes = useStyles(props);
 
-  const handleClick = (i) => {
+  const handleClick = (i: number) => {
     props.socket.emit("word_click", i);
   };
 
-  const generateOnClickMethod = (i, j) => {
+  const generateOnClickMethod = (i: number, j: number) => {
     if (
       props.playerTurn &&
       !["R", "B", "N", "A"].includes(props.words[i * 5 + j])

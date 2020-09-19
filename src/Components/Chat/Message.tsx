@@ -3,6 +3,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import { IMessage } from "./domain";
 
 const useStyles = makeStyles((theme) => ({
   message: {
@@ -43,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Message = (props) => {
+const Message = (props: IMessage) => {
   const classes = useStyles();
   // Was the message sent by the current user. If so, add a css class
   return (

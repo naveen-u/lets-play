@@ -1,4 +1,4 @@
-import React from "react";
+import React, { SetStateAction } from "react";
 import { useRecoilValue } from "recoil";
 import Alert from "@material-ui/lab/Alert";
 import Avatar from "@material-ui/core/Avatar";
@@ -21,8 +21,20 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 
-import { TEAMS } from "./Constants";
 import { userIdState } from "../../store";
+import { IPlayer, Teams } from "./domain";
+
+interface ITeamCardProps {
+  socket: SocketIOClient.Socket;
+  team: Teams;
+  currentTeam: Teams;
+  setCurrentTeam: React.Dispatch<SetStateAction<Teams>>;
+  list: IPlayer[];
+  allowReady: boolean;
+  ready: boolean;
+  percentOfMembers: number;
+  spymaster: IPlayer | undefined;
+}
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -45,14 +57,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TeamCard = (props) => {
+const TeamCard = (props: ITeamCardProps) => {
   const classes = useStyles();
 
   const userId = useRecoilValue(userIdState);
 
-  const color = props.team === TEAMS.RED ? "Crimson" : "SteelBlue";
+  const color = props.team === Teams.RED ? "Crimson" : "SteelBlue";
 
-  const themeColor = props.team === TEAMS.RED ? "secondary" : "primary";
+  const themeColor = props.team === Teams.RED ? "secondary" : "primary";
 
   const handleJoin = () => {
     props.socket.emit("join_team", props.team);
@@ -60,8 +72,8 @@ const TeamCard = (props) => {
   };
 
   const handleLeave = () => {
-    props.socket.emit("join_team", TEAMS.NEUTRAL);
-    props.setCurrentTeam(TEAMS.NEUTRAL);
+    props.socket.emit("join_team", Teams.NEUTRAL);
+    props.setCurrentTeam(Teams.NEUTRAL);
   };
 
   const handleSpymaster = () => {
@@ -101,7 +113,7 @@ const TeamCard = (props) => {
       <ListItem key="warning" className={classes.listItem}>
         <Alert
           variant="outlined"
-          color={props.team === TEAMS.BLUE ? "info" : "error"}
+          color={props.team === Teams.BLUE ? "info" : "error"}
           severity="info"
         >
           Each team needs at least two players!
@@ -119,7 +131,7 @@ const TeamCard = (props) => {
         className={classes.card}
         color="white"
         raised
-        variant={props.team !== TEAMS.NEUTRAL ? "outlined" : "elevation"}
+        variant={props.team !== Teams.NEUTRAL ? "outlined" : "elevation"}
         style={{ borderColor: color }}
       >
         <CardContent>
@@ -129,7 +141,7 @@ const TeamCard = (props) => {
             color={themeColor}
           />
           <List>
-            {props.spymaster !== "" ? (
+            {props.spymaster !== undefined ? (
               <>
                 <ListItem className={classes.listItem}>
                   <ListItemAvatar>

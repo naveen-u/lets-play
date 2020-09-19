@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
 import List from "@material-ui/core/List";
 import Message from "./Message";
+import { IMessage } from "./domain";
 
-const Messages = (props) => {
+const Messages = (props: { messages: IMessage[] }) => {
   useEffect(() => {
     // There is a new message in the state, scroll to bottom of list
-    const objDiv = document.getElementById("messageList").parentElement;
-    objDiv.scrollTop = objDiv.scrollHeight;
+    const objDiv = document.getElementById("messageList")!.parentElement;
+    objDiv!.scrollTop = objDiv!.scrollHeight;
   });
 
   // Loop through all the messages in the state and create a Message component

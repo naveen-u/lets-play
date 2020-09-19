@@ -63,7 +63,6 @@ export function SubscribeToStateChanges() {
     window.addEventListener("beforeunload", onBeforeUnload);
 
     socket.on("set_state", (state: IGameState) => {
-      console.log("Got setState: ", state);
       state.username && setUsername(state.username);
       state.userId && setUserId(state.userId);
       state.roomId && setRoomId(state.roomId);

@@ -4,7 +4,7 @@ import { Avatar as MuiAvatar } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import GroupAddIcon from "@material-ui/icons/GroupAdd";
-import MuiAlert from "@material-ui/lab/Alert";
+import MuiAlert, { Color } from "@material-ui/lab/Alert";
 import Slide from "@material-ui/core/Slide";
 import Snackbar from "@material-ui/core/Snackbar";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -34,20 +34,20 @@ const Share = () => {
 
   const [openToast, setOpenToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const [severity, setSeverity] = useState("");
+  const [severity, setSeverity] = useState("info" as Color);
 
   const copyRoomCode = () => {
     navigator.clipboard
       .writeText(room)
       .then(() => {
         setToastMessage("Room code copied to clipboard!");
-        setSeverity("success");
+        setSeverity("success" as Color);
         setOpenToast(true);
       })
       .catch((err) => {
         // This can happen if the user denies clipboard permissions
         setToastMessage("Could not copy!");
-        setSeverity("error");
+        setSeverity("error" as Color);
         setOpenToast(true);
         console.error("Could not copy text: ", err);
       });
@@ -74,7 +74,7 @@ const Share = () => {
     setOpenToast(false);
   };
 
-  function TransitionLeft(props) {
+  function TransitionLeft(props: object) {
     return <Slide {...props} direction="left" />;
   }
 

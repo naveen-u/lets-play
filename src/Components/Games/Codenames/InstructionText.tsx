@@ -2,6 +2,8 @@ import React from "react";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 
+type TColors = "red" | "blue" | "beige" | "black";
+
 const useStyles = makeStyles((theme) => ({
   text: {
     margin: theme.spacing(2, 3),
@@ -101,7 +103,7 @@ function Text() {
   );
 }
 
-function TinyBox(props) {
+function TinyBox(props: { color: TColors }) {
   const classes = useStyles();
   return <div className={`${classes.box} ${classes[props.color]}`} />;
 }

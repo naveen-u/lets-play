@@ -4,15 +4,30 @@ import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, Theme } from "@material-ui/core/styles";
 
 import SpymasterInput from "./SpymasterInput";
 import StatusBar from "./StatusBar";
 import WordGrid from "./WordGrid";
-import { TEAMS, STATES } from "./Constants";
 import { isAdminState, userIdState } from "../../store";
+import { GameStates, IGameData, IPlayer, Teams } from "./domain";
 
-const useStyles = makeStyles((theme) => ({
+interface IStyleProps {
+  currentColor: string;
+  playerTurn: boolean;
+}
+
+interface IGameProps {
+  socket: SocketIOClient.Socket;
+  gameState: GameStates;
+  setGameState: (state: GameStates) => void;
+  currentTeam: Teams;
+  blueMaster: IPlayer;
+  redMaster: IPlayer;
+  playerList: IPlayer[];
+}
+
+const useStyles = makeStyles<Theme, IStyleProps>((theme) => ({
   clue: {
     borderWidth: "2px",
     borderRadius: 16,
@@ -49,10 +64,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Game = (props) => {
-  const [words, setWords] = useState([]);
-  const [grid, setGrid] = useState([]);
-  const [clue, setClue] = useState([]);
+const Game = (props: IGameProps) => {
+  const [words, setWords] = useState([] as string[]);
+  const [grid, setGrid] = useState([] as string[]);
+  const [clue, setClue] = useState("");
 
   const [turns, setTurns] = useState(0);
   const [blueLeft, setBlueLeft] = useState(0);
@@ -63,7 +78,7 @@ const Game = (props) => {
   const isAdmin = useRecoilValue(isAdminState);
 
   useEffect(() => {
-    props.socket.on("game_data", (data) => {
+    props.socket.on("game_data", (data: IGameData) => {
       if (data.words != null) {
         setWords(data.words);
       }
@@ -92,35 +107,35 @@ const Game = (props) => {
   }, [props, props.socket]);
 
   const isSpymaster =
-    (props.currentTeam === TEAMS.BLUE && props.blueMaster.id === userId) ||
-    (props.currentTeam === TEAMS.RED && props.redMaster.id === userId);
+    (props.currentTeam === Teams.BLUE && props.blueMaster.id === userId) ||
+    (props.currentTeam === Teams.RED && props.redMaster.id === userId);
 
-  const themeColor = props.currentTeam === TEAMS.BLUE ? "primary" : "secondary";
+  const themeColor = props.currentTeam === Teams.BLUE ? "primary" : "secondary";
 
   const currentColor =
-    props.gameState === STATES.BLUE_PLAYER
+    props.gameState === GameStates.BLUE_PLAYER
       ? "DeepSkyBlue"
-      : props.gameState === STATES.RED_PLAYER
+      : props.gameState === GameStates.RED_PLAYER
       ? "FireBrick"
       : "Grey";
 
   const playerTurn =
-    ((props.gameState === STATES.BLUE_PLAYER &&
-      props.currentTeam === TEAMS.BLUE) ||
-      (props.gameState === STATES.RED_PLAYER &&
-        props.currentTeam === TEAMS.RED)) &&
+    ((props.gameState === GameStates.BLUE_PLAYER &&
+      props.currentTeam === Teams.BLUE) ||
+      (props.gameState === GameStates.RED_PLAYER &&
+        props.currentTeam === Teams.RED)) &&
     !isSpymaster;
 
   const spymasterTurn =
     isSpymaster &&
-    ((props.gameState === STATES.BLUE_SPYMASTER &&
-      props.currentTeam === TEAMS.BLUE) ||
-      (props.gameState === STATES.RED_SPYMASTER &&
-        props.currentTeam === TEAMS.RED));
+    ((props.gameState === GameStates.BLUE_SPYMASTER &&
+      props.currentTeam === Teams.BLUE) ||
+      (props.gameState === GameStates.RED_SPYMASTER &&
+        props.currentTeam === Teams.RED));
 
-  const gameOver = props.gameState === STATES.GAME_OVER;
+  const gameOver = props.gameState === GameStates.GAME_OVER;
 
-  const currentTeamLeft = props.currentTeam === TEAMS.BLUE ? blueLeft : redLeft;
+  const currentTeamLeft = props.currentTeam === Teams.BLUE ? blueLeft : redLeft;
 
   const classes = useStyles({ currentColor, playerTurn });
 
@@ -149,7 +164,7 @@ const Game = (props) => {
         redLeft={redLeft}
         turns={turns}
         currentColor={currentColor}
-        gameOver={props.gameState === STATES.GAME_OVER}
+        gameOver={props.gameState === GameStates.GAME_OVER}
         details={details}
       />
       <WordGrid
@@ -174,12 +189,12 @@ const Game = (props) => {
               className={classes.clue}
               border={1}
               display="flex"
-              direction="row"
+              // direction="row"
               width="100%"
             >
               <Box className={classes.clueText} display="block" component="div">
-                {props.gameState === STATES.BLUE_PLAYER ||
-                props.gameState === STATES.RED_PLAYER ? (
+                {props.gameState === GameStates.BLUE_PLAYER ||
+                props.gameState === GameStates.RED_PLAYER ? (
                   <Typography>{clue.toString().toUpperCase()}</Typography>
                 ) : (
                   <Typography color="textSecondary">
@@ -211,16 +226,18 @@ const Game = (props) => {
                 props.redMaster &&
                 Math.abs(
                   props.playerList.filter(
-                    (player) => player.team === TEAMS.BLUE
+                    (player: IPlayer) => player.team === Teams.BLUE
                   ).length -
                     props.playerList.filter(
-                      (player) => player.team === TEAMS.RED
+                      (player: IPlayer) => player.team === Teams.RED
                     ).length
                 ) <= 1 &&
-                props.playerList.filter((player) => player.team === TEAMS.BLUE)
-                  .length >= 2 &&
-                props.playerList.filter((player) => player.team === TEAMS.RED)
-                  .length >= 2
+                props.playerList.filter(
+                  (player: IPlayer) => player.team === Teams.BLUE
+                ).length >= 2 &&
+                props.playerList.filter(
+                  (player: IPlayer) => player.team === Teams.RED
+                ).length >= 2
               )
             }
           >

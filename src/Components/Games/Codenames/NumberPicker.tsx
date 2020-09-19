@@ -5,6 +5,12 @@ import IconButton from "@material-ui/core/IconButton";
 import Popover from "@material-ui/core/Popover";
 import { makeStyles } from "@material-ui/core/styles";
 
+interface INumberPickerProps {
+  number: number;
+  setNumber: (number: number) => void;
+  maxNum: number;
+}
+
 const useStyles = makeStyles((theme) => ({
   popover: {
     borderRadius: "10%",
@@ -26,12 +32,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const NumberPicker = (props) => {
+const NumberPicker = (props: INumberPickerProps) => {
   const classes = useStyles();
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = React.useState(null as Element | null);
 
-  const handleClick = (event) => {
+  const handleClick = (event: React.MouseEvent) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -44,7 +50,7 @@ const NumberPicker = (props) => {
 
   const numberRows = [];
 
-  const getSetFunction = (i) => {
+  const getSetFunction = (i: number) => {
     return () => {
       handleClose();
       props.setNumber(i);

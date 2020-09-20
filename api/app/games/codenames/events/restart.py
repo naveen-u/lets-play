@@ -9,7 +9,7 @@ from flask_login import current_user
 
 from app import socketio, db
 from app.models.user_data import UserData
-from app.models.codenames import CodenamesTeams
+from app.games.codenames.models import CodenamesTeams
 from app.utils import is_admin
 from .constants import NAMESPACE, TEAMS, STATES, SPYMASTER
 from .utils import is_codenames_player, player_distribution_is_valid, create_word_list

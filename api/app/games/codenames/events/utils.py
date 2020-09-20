@@ -12,7 +12,7 @@ from flask_login import current_user
 from sqlalchemy import func
 
 from app import db
-from app.models.codenames import (
+from app.games.codenames.models import (
     CodenamesTeams,
     CodenamesWords,
 )

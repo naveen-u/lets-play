@@ -11,7 +11,7 @@ from flask_login import current_user
 from app import socketio, db
 from app import register_clean_up_method
 from app.models.user_data import UserData
-from app.models.codenames import (
+from app.games.codenames.models import (
     CodenamesPlayers,
     CodenamesTeams,
     CodenamesRooms,

@@ -2,13 +2,11 @@
 This module contains the session route for login and logout.
 """
 
-from os import stat
 import random
 import string
 import uuid
 
 from flask import request, jsonify, json, current_app
-from flask.signals import Namespace
 from flask_login import current_user, login_user, logout_user
 from app.models import UserData, RoomData
 from app import flask_app, db, socketio, clean_up_methods

@@ -12,7 +12,6 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from logging.handlers import RotatingFileHandler
-from flask.logging import default_handler
 
 from config import Config
 
@@ -63,4 +62,4 @@ def register_clean_up_method(clean_up_method):
     clean_up_methods.append(clean_up_method)
 
 
-from app import routes, events, models, commands
+from app import routes, events, models, commands, games

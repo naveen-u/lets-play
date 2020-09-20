@@ -7,7 +7,7 @@ from flask_socketio import emit, join_room, leave_room
 from flask_login import current_user
 
 from app import socketio, db
-from app.models.codenames import CodenamesTeams
+from app.games.codenames.models import CodenamesTeams
 from .constants import NAMESPACE, TEAMS, STATES
 from .utils import (
     is_codenames_player,

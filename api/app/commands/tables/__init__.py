@@ -100,5 +100,3 @@ def list_tables():
 
 
 flask_app.cli.add_command(tables_cli)
-
-from .codenames import *

@@ -1,6 +1,8 @@
 import React from "react";
 import { useRecoilValue } from "recoil";
 import AppBar from "@material-ui/core/AppBar";
+import Avatar from "@material-ui/core/Avatar";
+import Box from "@material-ui/core/Box";
 import Divider from "@material-ui/core/Divider";
 import Toolbar from "@material-ui/core/Toolbar";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -8,8 +10,8 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import LeaveRoom from "./LeaveRoom";
 import Share from "./Share";
-import { Avatar } from "@material-ui/core";
-import { userIdState, usernameState } from "../store";
+import { userIdState, usernameState } from "../stores/gameDataStore";
+import dice from "../../assets/dice.png";
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -22,6 +24,9 @@ const useStyles = makeStyles((theme) => ({
   divider: {
     margin: theme.spacing(1, 2, 1, 3),
   },
+  logo: {
+    height: "100%",
+  },
 }));
 
 const Navbar = () => {
@@ -32,7 +37,12 @@ const Navbar = () => {
   return (
     <AppBar position="sticky" color="default">
       <Toolbar variant="dense">
-        <Typography variant="subtitle1">Let's Play!</Typography>
+        <Box height="4vh" marginRight={2}>
+          <img src={dice} alt="Let's Play!" className={classes.logo} />
+        </Box>
+        <Typography variant="h6">
+          <pre>Let's Play!</pre>
+        </Typography>
         <div className={classes.grow} />
         <div className={classes.sectionDesktop}>
           <Share />

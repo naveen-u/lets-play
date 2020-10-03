@@ -10,7 +10,7 @@ import Chat from "../../Chat";
 import Game from "./Game";
 import PickTeams from "./PickTeams";
 import PlayerList from "./PlayerList";
-import { userIdState } from "../../store";
+import { userIdState } from "../../stores/gameDataStore";
 import { GameStates, IPlayer, ITeamList, Teams } from "./domain";
 
 const socket = io("/codenames", { autoConnect: false });

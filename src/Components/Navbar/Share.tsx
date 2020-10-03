@@ -9,7 +9,7 @@ import Slide from "@material-ui/core/Slide";
 import Snackbar from "@material-ui/core/Snackbar";
 import Tooltip from "@material-ui/core/Tooltip";
 import { makeStyles } from "@material-ui/core/styles";
-import { roomIdState } from "../store";
+import { roomIdState } from "../stores/gameDataStore";
 
 const useStyles = makeStyles((theme) => ({
   menuItem: {

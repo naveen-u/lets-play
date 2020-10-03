@@ -12,6 +12,7 @@ from flask_socketio import join_room
 from app import socketio, scheduler, db, flask_app
 from app.models import UserData
 from app.routes import clean_up_methods
+from app.utils import is_admin
 
 log = logging.getLogger(__name__)
 
@@ -43,6 +44,19 @@ def handle_disconnecting():
             args=[current_user.sid],
             next_run_time=(datetime.datetime.now() + datetime.timedelta(seconds=10)),
         )
+
+
+@socketio.on("select_game")
+@is_admin
+def handle_select_game(selected_game):
+    """
+    Handles the select game event. This event is fired when the admin chooses a game
+    for the room.
+    """
+    if current_user.is_authenticated:
+        current_user.room.game = selected_game
+        db.session.commit()
+        socketio.emit("set_state", {"game": selected_game}, room=current_user.room_id)
 
 
 def cleanup(socket_id):

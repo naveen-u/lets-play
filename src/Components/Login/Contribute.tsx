@@ -34,7 +34,8 @@ const Contribute = () => {
         target="_blank"
         rel="noreferrer"
       >
-        Contribute on Github <GitHubIcon style={{ margin: "5px" }} />
+        Contribute to this project on Github{" "}
+        <GitHubIcon style={{ margin: "5px" }} />
       </Link>
     </Box>
   );

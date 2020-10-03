@@ -66,6 +66,7 @@ def get_session():
                     {"username": user.username, "userId": user.id}
                     for user in current_user.room.users
                 ],
+                "game": current_user.room.game or "",
             }
         )
     return "", 401

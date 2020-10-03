@@ -9,7 +9,7 @@ import { makeStyles, Theme } from "@material-ui/core/styles";
 import SpymasterInput from "./SpymasterInput";
 import StatusBar from "./StatusBar";
 import WordGrid from "./WordGrid";
-import { isAdminState, userIdState } from "../../store";
+import { isAdminState, userIdState } from "../../stores/gameDataStore";
 import { GameStates, IGameData, IPlayer, Teams } from "./domain";
 
 interface IStyleProps {

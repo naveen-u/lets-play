@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { atom, selector, useSetRecoilState } from "recoil";
 import io from "socket.io-client";
-import { IGameState, IUserData } from "./domain";
+import { IGameState, IUserData } from "../domain";
 
 export const usernameState = atom<string>({
   key: "usernameState",
@@ -42,7 +42,7 @@ export const isAdminState = selector<boolean>({
   },
 });
 
-const socket = io({ autoConnect: false });
+export const socket = io({ autoConnect: false });
 
 export function SubscribeToStateChanges() {
   const setUsername = useSetRecoilState(usernameState);
@@ -50,6 +50,7 @@ export function SubscribeToStateChanges() {
   const setRoomId = useSetRecoilState(roomIdState);
   const setRoomAdmin = useSetRecoilState(roomAdminState);
   const setUserList = useSetRecoilState(userListState);
+  const setGame = useSetRecoilState(gameInProgressState);
 
   useEffect(() => {
     if (!socket.connected) {
@@ -68,13 +69,14 @@ export function SubscribeToStateChanges() {
       state.roomId && setRoomId(state.roomId);
       state.roomAdmin && setRoomAdmin(state.roomAdmin);
       state.userList && setUserList(state.userList);
+      state.game && setGame(state.game);
     });
 
     return () => {
       socket.disconnect();
       window.removeEventListener("beforeunload", onBeforeUnload);
     };
-  }, [setUsername, setUserId, setRoomId, setRoomAdmin, setUserList]);
+  }, [setUsername, setUserId, setRoomId, setRoomAdmin, setUserList, setGame]);
 
   return null;
 }

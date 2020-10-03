@@ -81,8 +81,7 @@ const darkTheme = createMuiTheme({
           "-webkit-box-shadow": "inset 0 0 6px rgba(0,0,0,0.00)",
         },
         "*::-webkit-scrollbar-thumb": {
-          backgroundColor: "rgba(0,0,0,.5)",
-          outline: "2px solid slategrey",
+          backgroundColor: "dimgrey",
         },
       },
     },

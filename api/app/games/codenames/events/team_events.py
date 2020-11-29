@@ -8,7 +8,7 @@ from flask_login import current_user
 
 from app import socketio, db
 from app.games.codenames.models import CodenamesTeams
-from .constants import NAMESPACE, TEAMS, STATES
+from .constants import NAMESPACE, STATE_KEYS, TEAMS, STATES
 from .utils import (
     is_codenames_player,
     is_spymaster,
@@ -66,10 +66,18 @@ def on_join_team(message):
     ):
         if old_team.spymaster is not None and old_team.spymaster == current_user.id:
             old_team.room.state = STATES.JOIN
-            emit("game_state", STATES.JOIN, room=current_user.room_id)
+            emit(
+                "set_state",
+                {STATE_KEYS.GAME_STATE: STATES.JOIN},
+                room=current_user.room_id,
+            )
         elif len(old_team.players) == 2:
             old_team.room.state = STATES.JOIN
-            emit("game_state", STATES.JOIN, room=current_user.room_id)
+            emit(
+                "set_state",
+                {STATE_KEYS.GAME_STATE: STATES.JOIN},
+                room=current_user.room_id,
+            )
 
     # If player was spymaster of their old team, remove team's spymaster
     if old_team.spymaster is not None and old_team.spymaster == current_user.id:
@@ -151,6 +159,8 @@ def on_team_ready():
         }
         team.room.state = state_transition.get(team.room.state)
     db.session.commit()
-    emit("game_state", team.room.state, room=current_user.room_id)
+    emit(
+        "set_state", {STATE_KEYS.GAME_STATE: team.room.state}, room=current_user.room_id
+    )
     if current_user.room.codenames_room.state == STATES.STARTED:
         create_word_list()

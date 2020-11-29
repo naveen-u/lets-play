@@ -16,7 +16,15 @@ from app.games.codenames.models import (
     CodenamesTeams,
     CodenamesRooms,
 )
-from .constants import NAMESPACE, TEAMS, STATES, TEAMS_DICT, SPYMASTER, PLAYER
+from .constants import (
+    NAMESPACE,
+    STATE_KEYS,
+    TEAMS,
+    STATES,
+    TEAMS_DICT,
+    SPYMASTER,
+    PLAYER,
+)
 
 
 ######################################################################
@@ -83,11 +91,11 @@ def on_connect():
             )
         db.session.commit()
 
-    emit("game_state", current_user.room.codenames_room.state)
+    emit("set_state", {STATE_KEYS.GAME_STATE: current_user.room.codenames_room.state})
     # Send a message to the new player with the list of current players
     team_list = dict()
-    team_list["players"] = []
-    players = (
+    team_list[STATE_KEYS.PLAYER_LIST] = []
+    player_list = (
         CodenamesTeams.query.filter_by(room_id=current_user.room_id)
         .join(CodenamesPlayers, CodenamesTeams.id == CodenamesPlayers.team_id)
         .with_entities(CodenamesPlayers.id, CodenamesTeams.team_name)
@@ -96,9 +104,11 @@ def on_connect():
         .all()
     )
 
-    for i in players:
+    for i in player_list:
         player_id, name, team = i
-        team_list["players"].append({"id": player_id, "user": name, "team": team})
+        team_list[STATE_KEYS.PLAYER_LIST].append(
+            {"id": player_id, "user": name, "team": team}
+        )
 
     spymasters = (
         CodenamesTeams.query.filter(
@@ -114,10 +124,11 @@ def on_connect():
 
     for i in spymasters:
         player_id, name, team = i
-        team_list[team + SPYMASTER] = {"id": player_id, "user": name, "team": team}
+        team_list[
+            STATE_KEYS.BLUE_MASTER if team == TEAMS.BLUE else STATE_KEYS.RED_MASTER
+        ] = {"id": player_id, "user": name, "team": team}
 
-    team_list["currentTeam"] = current_user.codenames_player.team.team_name
-    emit("team_list", team_list, room=current_user.sid)
+    emit("set_state", team_list, room=current_user.sid)
     room = current_user.room.codenames_room
     if room.state not in [STATES.JOIN, STATES.RED_READY, STATES.BLUE_READY]:
         data = {}
@@ -172,8 +183,8 @@ def cleanup_codenames(leaving_user):
         ):
             team.room.state = STATES.JOIN
             emit(
-                "game_state",
-                STATES.JOIN,
+                "set_state",
+                {STATE_KEYS.GAME_STATE: STATES.JOIN},
                 room=leaving_user.room_id,
                 namespace=NAMESPACE,
             )
@@ -194,8 +205,8 @@ def cleanup_codenames(leaving_user):
         ):
             team.room.state = STATES.JOIN
             emit(
-                "game_state",
-                STATES.JOIN,
+                "set_state",
+                {STATE_KEYS.GAME_STATE: STATES.JOIN},
                 room=leaving_user.room_id,
                 namespace=NAMESPACE,
             )

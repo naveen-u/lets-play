@@ -7,7 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 
 import Instructions from "./Instructions";
-import { Teams, PlayerType } from "./domain";
+import { Teams, PlayerType } from "../domain";
 
 interface StatusBarProps {
   currentColor: string;

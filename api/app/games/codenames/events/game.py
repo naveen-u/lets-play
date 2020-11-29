@@ -64,7 +64,6 @@ def on_clue(data):
     # Check that the clue does not contain any of the words in the grid
     for word in json.loads(current_user.room.codenames_room.words):
         if word not in ["R", "B", "N", "A"] and word in data["clue"]:
-            print(f'\n\n\n{word} is inside {data["clue"]}\n\n\n')
             return
     # Check that the clue number is at most the number of words left
     if current_user.codenames_player.team.words_left < data["number"]:

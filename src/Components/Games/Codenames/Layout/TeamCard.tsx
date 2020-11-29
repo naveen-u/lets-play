@@ -1,4 +1,4 @@
-import React, { SetStateAction } from "react";
+import React from "react";
 import { useRecoilValue } from "recoil";
 import Alert from "@material-ui/lab/Alert";
 import Avatar from "@material-ui/core/Avatar";
@@ -21,19 +21,18 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 
-import { userIdState } from "../../stores/gameDataStore";
-import { IPlayer, Teams } from "./domain";
+import { userIdState } from "../../../stores/gameDataStore";
+import { IPlayer, Teams } from "../domain";
 
 interface ITeamCardProps {
   socket: SocketIOClient.Socket;
   team: Teams;
   currentTeam: Teams;
-  setCurrentTeam: React.Dispatch<SetStateAction<Teams>>;
   list: IPlayer[];
   allowReady: boolean;
   ready: boolean;
   percentOfMembers: number;
-  spymaster: IPlayer | undefined;
+  spymaster: IPlayer | null;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -68,12 +67,10 @@ const TeamCard = (props: ITeamCardProps) => {
 
   const handleJoin = () => {
     props.socket.emit("join_team", props.team);
-    props.setCurrentTeam(props.team);
   };
 
   const handleLeave = () => {
     props.socket.emit("join_team", Teams.NEUTRAL);
-    props.setCurrentTeam(Teams.NEUTRAL);
   };
 
   const handleSpymaster = () => {
@@ -141,7 +138,7 @@ const TeamCard = (props: ITeamCardProps) => {
             color={themeColor}
           />
           <List>
-            {props.spymaster !== undefined ? (
+            {props.spymaster != null ? (
               <>
                 <ListItem className={classes.listItem}>
                   <ListItemAvatar>

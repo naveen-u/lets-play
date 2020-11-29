@@ -28,12 +28,15 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
   },
   image: {
-    height: "100%",
+    maxHeight: "100%",
+    maxWidth: "100%",
   },
   text: {
     width: "100%",
     position: "absolute",
     bottom: 100,
+    overflowWrap: "break-word",
+    fontFamily: "Monospace",
   },
   paper: {
     margin: theme.spacing(4, 4, 15, 4),
@@ -62,13 +65,11 @@ const Login = () => {
         <Box className={classes.imageContainer} width="100%" height="100vh">
           <img src={banner} alt="Let's Play!" className={classes.image} />
           <Typography variant="h5" align="center" className={classes.text}>
-            <pre>
-              Step 1: Create a room
-              <br />
-              Step 2: Invite friends
-              <br />
-              Step 3: Profit
-            </pre>
+            Step 1: Create a room
+            <br />
+            Step 2: Invite friends
+            <br />
+            Step 3: Profit
           </Typography>
         </Box>
       </Grid>

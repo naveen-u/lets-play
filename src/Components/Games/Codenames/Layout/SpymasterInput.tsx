@@ -83,7 +83,6 @@ const SpymasterInput = (props: ISpymasterInputProps) => {
       <NumberPicker
         number={clueNumber}
         setNumber={setClueNumber}
-        // className={classes.margin}
         maxNum={props.maxNum}
       />
       <Button

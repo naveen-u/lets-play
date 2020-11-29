@@ -37,8 +37,9 @@ def populate_codenames_words():
     try:
         with open(path, mode="r") as csv_file:
             entries = csv.DictReader(csv_file)
-            count = len(list(entries))
-            for entry in entries:
+            entryList = list(entries)
+            count = len(entryList)
+            for entry in entryList:
                 words_entry = CodenamesWords(
                     id=int(entry["id"]),
                     variant=str(entry["variant"]),

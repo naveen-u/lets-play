@@ -1,3 +1,5 @@
+export const NAMESPACE = "/codenames";
+
 export enum GameStates {
   "JOIN" = "JOIN",
   "RED_READY" = "RED_READY",
@@ -43,4 +45,11 @@ export interface IGameData {
 export enum PlayerType {
   PLAYER = "Player",
   SPYMASTER = "Spymaster",
+}
+
+export interface ICodenamesState {
+  playerList?: IPlayer[];
+  blueMaster?: IPlayer;
+  redMaster?: IPlayer;
+  gameState?: GameStates;
 }

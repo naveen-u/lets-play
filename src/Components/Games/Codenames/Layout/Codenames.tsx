@@ -1,0 +1,73 @@
+import React from "react";
+import { useRecoilValue } from "recoil";
+import Box from "@material-ui/core/Box";
+import Divider from "@material-ui/core/Divider";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+
+import Chat from "../../../Chat";
+import Game from "./Game";
+import PickTeams from "./PickTeams";
+import PlayerList from "./PlayerList";
+import { userIdState } from "../../../stores/gameDataStore";
+import { GameStates, Teams } from "../domain";
+import {
+  blueMasterState,
+  currentTeamState,
+  gameConditionState,
+  redMasterState,
+  socket,
+  SubscribeToStateChanges,
+} from "../store";
+
+const Codenames = () => {
+  const blueMaster = useRecoilValue(blueMasterState);
+  const redMaster = useRecoilValue(redMasterState);
+  const currentTeam = useRecoilValue(currentTeamState);
+  const gameState = useRecoilValue(gameConditionState);
+  const userId = useRecoilValue(userIdState);
+
+  const ongoing = !(
+    gameState === GameStates.JOIN ||
+    gameState === GameStates.BLUE_READY ||
+    gameState === GameStates.RED_READY
+  );
+
+  const teamChatEnabled =
+    ongoing &&
+    ((currentTeam === Teams.BLUE && blueMaster?.id !== userId) ||
+      (currentTeam === Teams.RED && redMaster?.id !== userId));
+
+  return (
+    <>
+      <SubscribeToStateChanges />
+      <Grid container component="main">
+        <Grid item xs={12} sm={9} md={9}>
+          <Box
+            height="100%"
+            display="flex"
+            flexDirection="row"
+            justifyContent="left"
+            alignContent="center"
+          >
+            <PlayerList />
+            <Divider orientation="vertical" light />
+
+            {gameState != null && ongoing ? (
+              <Game />
+            ) : ongoing === false ? (
+              <PickTeams />
+            ) : (
+              <></>
+            )}
+          </Box>
+        </Grid>
+        <Grid item xs={false} sm={3} md={3} component={Paper}>
+          <Chat teamSocket={teamChatEnabled ? socket : undefined} />
+        </Grid>
+      </Grid>
+    </>
+  );
+};
+
+export default Codenames;

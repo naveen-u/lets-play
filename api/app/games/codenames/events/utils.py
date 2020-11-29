@@ -16,7 +16,7 @@ from app.games.codenames.models import (
     CodenamesTeams,
     CodenamesWords,
 )
-from .constants import NAMESPACE, TEAMS, STATES
+from .constants import NAMESPACE, TEAMS, STATE_KEYS, STATES
 
 
 def player_distribution_is_valid(check_spymaster=True):
@@ -92,7 +92,7 @@ def create_word_list():
     db.session.commit()
     data = dict()
     data["grid"] = grid
-    emit("game_state", state, room=current_user.room_id)
+    emit("set_state", {STATE_KEYS.GAME_STATE: state}, room=current_user.room_id)
     for team in current_user.room.codenames_room.teams:
         if team.spymaster_player is not None:
             emit("game_data", data, room=team.spymaster_player.user_data.sid)

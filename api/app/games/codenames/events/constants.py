@@ -8,6 +8,14 @@ NAMESPACE = "/codenames"
 
 SPYMASTER = "Spymaster"
 
+STATE_KEYS_DICT = {
+    "PLAYER_LIST": "playerList",
+    "BLUE_MASTER": "blueMaster",
+    "RED_MASTER": "redMaster",
+    "GAME_STATE": "gameState",
+}
+STATE_KEYS = SimpleNamespace(**STATE_KEYS_DICT)
+
 PLAYER = "Player"
 
 # Team names

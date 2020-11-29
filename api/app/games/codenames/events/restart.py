@@ -11,7 +11,7 @@ from app import socketio, db
 from app.models.user_data import UserData
 from app.games.codenames.models import CodenamesTeams
 from app.utils import is_admin
-from .constants import NAMESPACE, TEAMS, STATES, SPYMASTER
+from .constants import NAMESPACE, STATE_KEYS, TEAMS, STATES, SPYMASTER
 from .utils import is_codenames_player, player_distribution_is_valid, create_word_list
 
 
@@ -43,7 +43,7 @@ def on_restart():
     if not current_user.room.codenames_room.state == STATES.GAME_OVER:
         return
 
-    emit("game_state", STATES.JOIN, room=current_user.room_id)
+    emit("set_state", {STATE_KEYS.GAME_STATE: STATES.JOIN}, room=current_user.room_id)
 
     team = CodenamesTeams.query.filter_by(
         room_id=current_user.room_id, team_name=TEAMS.NEUTRAL
@@ -96,5 +96,7 @@ def on_restart_with_same_teams():
     current_user.room.codenames_room.state = STATES.STARTED
     current_user.room.codenames_room.turns_left = 0
     db.session.commit()
-    emit("game_state", STATES.STARTED, room=current_user.room_id)
+    emit(
+        "set_state", {STATE_KEYS.GAME_STATE: STATES.STARTED}, room=current_user.room_id
+    )
     create_word_list()

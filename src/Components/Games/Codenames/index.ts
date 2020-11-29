@@ -1,3 +1,3 @@
-import Codenames from "./Codenames";
+import Codenames from "./Layout/Codenames";
 
 export default Codenames;

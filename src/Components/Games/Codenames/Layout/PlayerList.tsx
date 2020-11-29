@@ -6,7 +6,9 @@ import ListItem from "@material-ui/core/ListItem";
 import Skeleton from "@material-ui/lab/Skeleton";
 import Tooltip from "@material-ui/core/Tooltip";
 import { makeStyles } from "@material-ui/core/styles";
-import { IPlayer, Teams } from "./domain";
+import { Teams } from "../domain";
+import { playerListState } from "../store";
+import { useRecoilValue } from "recoil";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -30,12 +32,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PlayerList = (props: { list: IPlayer[] }) => {
+const PlayerList = () => {
   const classes = useStyles();
+  const playerList = useRecoilValue(playerListState);
 
   const userSkeleton = [];
 
-  for (let i = props.list.length; i < 4; ++i) {
+  for (let i = playerList.length; i < 4; ++i) {
     userSkeleton.push(
       <ListItem key={i} className={classes.listItem} alignItems="center">
         <Tooltip title="This game requires a minimum of four players">
@@ -49,7 +52,7 @@ const PlayerList = (props: { list: IPlayer[] }) => {
 
   return (
     <List>
-      {props.list.map((user, i) => {
+      {playerList.map((user, i) => {
         return (
           <ListItem key={i} className={classes.listItem} alignItems="center">
             <Tooltip title={user.user}>

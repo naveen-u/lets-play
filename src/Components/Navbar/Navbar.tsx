@@ -12,6 +12,7 @@ import LeaveRoom from "./LeaveRoom";
 import Share from "./Share";
 import { userIdState, usernameState } from "../stores/gameDataStore";
 import dice from "../../assets/dice.png";
+import UserAvatar from "../UserAvatar";
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -61,9 +62,7 @@ const Navbar = () => {
             className={classes.divider}
           />
 
-          <Tooltip title={username}>
-            <Avatar src={`https://api.adorable.io/avatars/50/${userId}.png`} />
-          </Tooltip>
+          <UserAvatar username={username} userId={userId} />
         </div>
       </Toolbar>
     </AppBar>

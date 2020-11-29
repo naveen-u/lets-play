@@ -23,6 +23,7 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import { userIdState } from "../../../stores/gameDataStore";
 import { IPlayer, Teams } from "../domain";
+import UserAvatar from "../../../UserAvatar";
 
 interface ITeamCardProps {
   socket: SocketIOClient.Socket;
@@ -142,9 +143,9 @@ const TeamCard = (props: ITeamCardProps) => {
               <>
                 <ListItem className={classes.listItem}>
                   <ListItemAvatar>
-                    <Avatar
-                      alt={props.spymaster.user}
-                      src={`https://api.adorable.io/avatars/50/${props.spymaster.id}.png`}
+                    <UserAvatar
+                      username={props.spymaster.user}
+                      userId={props.spymaster.id}
                     />
                   </ListItemAvatar>
                   <ListItemText
@@ -183,10 +184,7 @@ const TeamCard = (props: ITeamCardProps) => {
               return props.spymaster?.id !== user.id ? (
                 <ListItem key={i} className={classes.listItem}>
                   <ListItemAvatar key={i}>
-                    <Avatar
-                      alt={user.user}
-                      src={`https://api.adorable.io/avatars/50/${user.id}.png`}
-                    />
+                    <UserAvatar username={user.user} userId={user.id} />
                   </ListItemAvatar>
                   <ListItemText
                     primary={user.user}

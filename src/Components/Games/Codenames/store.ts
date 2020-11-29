@@ -94,7 +94,6 @@ export function SubscribeToStateChanges() {
     window.addEventListener("beforeunload", onBeforeUnload);
 
     socket.on("set_state", (state: ICodenamesState) => {
-      console.log("Got set_state: ", state);
       state.playerList && setPlayerList(state.playerList);
       state.blueMaster && setBlueMaster(state.blueMaster);
       state.redMaster && setRedMaster(state.redMaster);
@@ -112,7 +111,6 @@ export function SubscribeToStateChanges() {
     });
 
     socket.on("join_team", (data: IPlayer) => {
-      console.log("Got join_team: ", data);
       if (data.team === Teams.NEUTRAL) {
         setBlueMaster((blueMaster) =>
           blueMaster?.id === data.id ? null : blueMaster

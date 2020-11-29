@@ -9,6 +9,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Teams } from "../domain";
 import { playerListState } from "../store";
 import { useRecoilValue } from "recoil";
+import UserAvatar from "../../../UserAvatar";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -62,10 +63,7 @@ const PlayerList = () => {
                 badgeContent=" "
                 invisible={user.team === Teams.NEUTRAL}
               >
-                <Avatar
-                  alt={user.user}
-                  src={`https://api.adorable.io/avatars/50/${user.id}.png`}
-                />
+                <UserAvatar username={user.user} userId={user.id} />
               </Badge>
             </Tooltip>
           </ListItem>

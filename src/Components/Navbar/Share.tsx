@@ -100,20 +100,22 @@ const Share = () => {
             URL
           </Button>
         </Tooltip>
-      </Box>
 
-      <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        open={openToast}
-        autoHideDuration={2000}
-        onClose={handleClose}
-        key="topright"
-        TransitionComponent={TransitionLeft}
-      >
-        <MuiAlert elevation={6} variant="filled" severity={severity}>
-          {toastMessage}
-        </MuiAlert>
-      </Snackbar>
+        {openToast && (
+          <Snackbar
+            anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            open={openToast}
+            autoHideDuration={2000}
+            onClose={handleClose}
+            key="topright"
+            TransitionComponent={TransitionLeft}
+          >
+            <MuiAlert elevation={6} variant="filled" severity={severity}>
+              {toastMessage}
+            </MuiAlert>
+          </Snackbar>
+        )}
+      </Box>
     </>
   );
 };

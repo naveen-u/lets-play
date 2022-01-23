@@ -1,18 +1,16 @@
-import React from "react";
-import { useRecoilValue } from "recoil";
 import AppBar from "@material-ui/core/AppBar";
-import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
 import Divider from "@material-ui/core/Divider";
-import Toolbar from "@material-ui/core/Toolbar";
-import Tooltip from "@material-ui/core/Tooltip";
-import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import React from "react";
+import { useRecoilValue } from "recoil";
+import dice from "../../assets/dice.png";
+import { userIdState, usernameState } from "../stores/gameDataStore";
+import UserAvatar from "../UserAvatar";
 import LeaveRoom from "./LeaveRoom";
 import Share from "./Share";
-import { userIdState, usernameState } from "../stores/gameDataStore";
-import dice from "../../assets/dice.png";
-import UserAvatar from "../UserAvatar";
 
 const useStyles = makeStyles((theme) => ({
   grow: {

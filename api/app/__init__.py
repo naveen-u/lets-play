@@ -4,6 +4,7 @@ The module contains the actual flask application code.
 
 import logging
 import os
+import sys
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask
@@ -21,6 +22,11 @@ if not os.path.exists("logs"):
 file_handler = RotatingFileHandler(
     "logs/lets-play.log", maxBytes=102400, backupCount=10
 )
+
+# handler = logging.StreamHandler(sys.stdout)
+# handler.setLevel(logging.DEBUG)
+# formatter = logging.Formatter("%(asctime)s | %(name)s %(funcName)s | %(message)s")
+# handler.setFormatter(formatter)
 
 logging.basicConfig(
     handlers=[file_handler],

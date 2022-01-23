@@ -1,9 +1,9 @@
-import AppBar from "@material-ui/core/AppBar";
-import Box from "@material-ui/core/Box";
-import Divider from "@material-ui/core/Divider";
-import { makeStyles } from "@material-ui/core/styles";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import makeStyles from '@mui/styles/makeStyles';
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
 import React from "react";
 import { useRecoilValue } from "recoil";
 import dice from "../../assets/dice.png";

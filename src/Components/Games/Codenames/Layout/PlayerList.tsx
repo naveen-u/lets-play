@@ -1,11 +1,11 @@
 import React from "react";
-import Avatar from "@material-ui/core/Avatar";
-import Badge from "@material-ui/core/Badge";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import Skeleton from "@material-ui/lab/Skeleton";
-import Tooltip from "@material-ui/core/Tooltip";
-import { makeStyles } from "@material-ui/core/styles";
+import Avatar from "@mui/material/Avatar";
+import Badge from "@mui/material/Badge";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import Skeleton from '@mui/material/Skeleton';
+import Tooltip from "@mui/material/Tooltip";
+import makeStyles from '@mui/styles/makeStyles';
 import { Teams } from "../domain";
 import { playerListState } from "../store";
 import { useRecoilValue } from "recoil";
@@ -43,7 +43,7 @@ const PlayerList = () => {
     userSkeleton.push(
       <ListItem key={i} className={classes.listItem} alignItems="center">
         <Tooltip title="This game requires a minimum of four players">
-          <Skeleton variant="circle">
+          <Skeleton variant="circular">
             <Avatar />
           </Skeleton>
         </Tooltip>
@@ -59,7 +59,7 @@ const PlayerList = () => {
             <Tooltip title={user.user}>
               <Badge
                 color={user.team === Teams.RED ? "secondary" : "primary"}
-                overlap="circle"
+                overlap="circular"
                 badgeContent=" "
                 invisible={user.team === Teams.NEUTRAL}
               >

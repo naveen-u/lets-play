@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import Box from "@material-ui/core/Box";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
+import Box from "@mui/material/Box";
+import CssBaseline from "@mui/material/CssBaseline";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import makeStyles from '@mui/styles/makeStyles';
 
 import banner from "../../assets/logo.png";
 import { getSession } from "../../Utils";

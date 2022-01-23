@@ -1,7 +1,7 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import { makeStyles } from "@material-ui/core";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import makeStyles from '@mui/styles/makeStyles';
 
 import Chat from "../Chat";
 import gameData from "../Games/config";
@@ -20,7 +20,7 @@ export default function GameSelectionScreen() {
   const styles = useStyles();
 
   return (
-    <Grid container component="main" direction="row" justify="space-between">
+    <Grid container component="main" direction="row" justifyContent="space-between">
       <Grid
         item
         container

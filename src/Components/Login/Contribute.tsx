@@ -1,8 +1,8 @@
 import React from "react";
-import Box from "@material-ui/core/Box";
-import Link from "@material-ui/core/Link";
-import GitHubIcon from "@material-ui/icons/GitHub";
-import { makeStyles } from "@material-ui/core/styles";
+import Box from "@mui/material/Box";
+import Link from "@mui/material/Link";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles((theme) => ({
   contribute: {

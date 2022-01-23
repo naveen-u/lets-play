@@ -1,25 +1,25 @@
 import React from "react";
 import { useRecoilValue } from "recoil";
-import Alert from "@material-ui/lab/Alert";
-import Avatar from "@material-ui/core/Avatar";
-import Badge from "@material-ui/core/Badge";
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import Divider from "@material-ui/core/Divider";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemText from "@material-ui/core/ListItemText";
-import Skeleton from "@material-ui/lab/Skeleton";
-import StarsIcon from "@material-ui/icons/Stars";
-import Tooltip from "@material-ui/core/Tooltip";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
+import Alert from '@mui/material/Alert';
+import Avatar from "@mui/material/Avatar";
+import Badge from "@mui/material/Badge";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import Divider from "@mui/material/Divider";
+import LinearProgress from "@mui/material/LinearProgress";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import ListItemText from "@mui/material/ListItemText";
+import Skeleton from '@mui/material/Skeleton';
+import StarsIcon from "@mui/icons-material/Stars";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import makeStyles from '@mui/styles/makeStyles';
 
 import { userIdState } from "../../../stores/gameDataStore";
 import { IPlayer, Teams } from "../domain";
@@ -89,7 +89,7 @@ const TeamCard = (props: ITeamCardProps) => {
       <Tooltip key={i} title="Each team needs a minimum of two players">
         <ListItem className={classes.listItem}>
           <ListItemAvatar>
-            <Skeleton variant="circle">
+            <Skeleton variant="circular">
               <Avatar />
             </Skeleton>
           </ListItemAvatar>

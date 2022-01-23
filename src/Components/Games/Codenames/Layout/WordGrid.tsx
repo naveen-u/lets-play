@@ -1,8 +1,10 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles, Theme } from "@material-ui/core/styles";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import { Theme } from "@mui/material/styles";
+
+import makeStyles from '@mui/styles/makeStyles';
 
 interface IWordGridProps {
   socket: SocketIOClient.Socket;
@@ -128,14 +130,14 @@ const WordGrid = (props: IWordGridProps) => {
       );
     }
     wordRows.push(
-      <Grid container key={`row${i}`} justify="center" alignItems="center">
+      <Grid container key={`row${i}`} justifyContent="center" alignItems="center">
         {wordRow}
       </Grid>
     );
   }
 
   return (
-    <Grid item container alignItems="center" justify="center">
+    <Grid item container alignItems="center" justifyContent="center">
       {wordRows}
     </Grid>
   );

@@ -1,10 +1,10 @@
 import React from "react";
 import { useRecoilValue } from "recoil";
-import Alert from "@material-ui/lab/Alert";
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
+import Alert from '@mui/material/Alert';
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import makeStyles from '@mui/styles/makeStyles';
 
 import Instructions from "./Instructions";
 import TeamCard from "./TeamCard";
@@ -65,7 +65,7 @@ const PickTeams = () => {
         Split into two teams.
       </Typography>
       <Box display="flex" justifyContent="center">
-        <Grid container justify="center" spacing={4} alignItems="center">
+        <Grid container justifyContent="center" spacing={4} alignItems="center">
           <Grid item>
             <TeamCard
               team={Teams.BLUE}

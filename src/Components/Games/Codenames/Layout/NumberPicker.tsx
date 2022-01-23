@@ -1,9 +1,9 @@
 import React from "react";
-import Avatar from "@material-ui/core/Avatar";
-import Box from "@material-ui/core/Box";
-import IconButton from "@material-ui/core/IconButton";
-import Popover from "@material-ui/core/Popover";
-import { makeStyles } from "@material-ui/core/styles";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import Popover from "@mui/material/Popover";
+import makeStyles from '@mui/styles/makeStyles';
 
 interface INumberPickerProps {
   number: number;
@@ -61,7 +61,7 @@ const NumberPicker = (props: INumberPickerProps) => {
     const numberRow = [];
     for (let j = 0; j < 3; ++j) {
       numberRow.push(
-        <IconButton onClick={getSetFunction(i)} disabled={props.maxNum < i}>
+        <IconButton onClick={getSetFunction(i)} disabled={props.maxNum < i} size="large">
           <Avatar
             className={`${classes.number} ${
               props.maxNum < i ? classes.disabled : ""
@@ -80,33 +80,31 @@ const NumberPicker = (props: INumberPickerProps) => {
     );
   }
 
-  return (
-    <>
-      <IconButton className={classes.button} onClick={handleClick}>
-        <Avatar className={classes.number}>{props.number}</Avatar>
-      </IconButton>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        transformOrigin={{
-          vertical: "bottom",
-          horizontal: "center",
-        }}
-        elevation={6}
-        PaperProps={{ className: classes.popover }}
-      >
-        <Box display="flex" flexDirection="column">
-          {numberRows}
-        </Box>
-      </Popover>
-    </>
-  );
+  return <>
+    <IconButton className={classes.button} onClick={handleClick} size="large">
+      <Avatar className={classes.number}>{props.number}</Avatar>
+    </IconButton>
+    <Popover
+      id={id}
+      open={open}
+      anchorEl={anchorEl}
+      onClose={handleClose}
+      anchorOrigin={{
+        vertical: "top",
+        horizontal: "center",
+      }}
+      transformOrigin={{
+        vertical: "bottom",
+        horizontal: "center",
+      }}
+      elevation={6}
+      PaperProps={{ className: classes.popover }}
+    >
+      <Box display="flex" flexDirection="column">
+        {numberRows}
+      </Box>
+    </Popover>
+  </>;
 };
 
 export default NumberPicker;

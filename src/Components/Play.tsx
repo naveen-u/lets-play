@@ -2,7 +2,7 @@ import React, { Suspense, useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { useHistory } from "react-router-dom";
 
-import CssBaseline from "@material-ui/core/CssBaseline";
+import CssBaseline from "@mui/material/CssBaseline";
 import Navbar from "./Navbar/Navbar";
 import { getSession } from "../Utils";
 import {

@@ -1,8 +1,8 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-import IconButton from "@material-ui/core/IconButton";
-import MeetingRoomIcon from "@material-ui/icons/MeetingRoom";
-import Tooltip from "@material-ui/core/Tooltip";
+import IconButton from "@mui/material/IconButton";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import Tooltip from "@mui/material/Tooltip";
 import { postSession } from "../../Utils";
 
 const LeaveRoom = () => {
@@ -24,7 +24,7 @@ const LeaveRoom = () => {
         aria-haspopup="true"
         color="primary"
         onClick={leaveRoom}
-      >
+        size="large">
         <MeetingRoomIcon />
       </IconButton>
     </Tooltip>

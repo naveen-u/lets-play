@@ -1,7 +1,8 @@
-import { createMuiTheme } from "@material-ui/core";
-import { blue, lightBlue, yellow, green } from "@material-ui/core/colors";
+import { createTheme } from "@mui/material";
+import { blue, green, lightBlue, yellow } from "@mui/material/colors";
+import { Theme } from "@mui/material/styles";
 
-declare module "@material-ui/core/styles/createPalette" {
+declare module "@mui/material/styles/createPalette" {
   interface Palette {
     default: {
       light: React.CSSProperties["color"];
@@ -26,9 +27,9 @@ declare module "@material-ui/core/styles/createPalette" {
 
 const white = "#FFF";
 
-const darkTheme = createMuiTheme({
+const darkTheme = createTheme({
   palette: {
-    type: "dark",
+    mode: "dark",
     default: {
       light: "rgba(41, 150, 243, .1)",
       main: "rgba(0, 40, 73, .9)",
@@ -62,26 +63,30 @@ const darkTheme = createMuiTheme({
       contrastText: white,
     },
     background: {
-      paper: "rgb(45, 45, 45)",
-      default: "rgb(26, 26, 26)",
+      paper: "rgb(5, 5, 5)",
+      default: "rgb(10, 10, 10)",
     },
   },
-  overrides: {
+  components: {
     MuiButton: {
-      root: {
-        borderRadius: 16,
+      styleOverrides: {
+        root: {
+          borderRadius: 16,
+        },
       },
     },
     MuiCssBaseline: {
-      "@global": {
-        "*::-webkit-scrollbar": {
-          width: "0.4em",
-        },
-        "*::-webkit-scrollbar-track": {
-          "-webkit-box-shadow": "inset 0 0 6px rgba(0,0,0,0.00)",
-        },
-        "*::-webkit-scrollbar-thumb": {
-          backgroundColor: "dimgrey",
+      styleOverrides: {
+        "@global": {
+          "*::-webkit-scrollbar": {
+            width: "0.4em",
+          },
+          "*::-webkit-scrollbar-track": {
+            "-webkit-box-shadow": "inset 0 0 6px rgba(0,0,0,0.00)",
+          },
+          "*::-webkit-scrollbar-thumb": {
+            backgroundColor: "dimgrey",
+          },
         },
       },
     },
@@ -90,5 +95,9 @@ const darkTheme = createMuiTheme({
     fontFamily: "Open Sans",
   },
 });
+
+declare module "@mui/styles/defaultTheme" {
+  interface DefaultTheme extends Theme {}
+}
 
 export default darkTheme;

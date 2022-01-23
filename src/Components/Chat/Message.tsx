@@ -1,8 +1,8 @@
 import React from "react";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import Typography from "@mui/material/Typography";
+import makeStyles from "@mui/styles/makeStyles";
 import { IMessage } from "./domain";
 
 const useStyles = makeStyles((theme) => ({
@@ -11,7 +11,8 @@ const useStyles = makeStyles((theme) => ({
     border: "0.5px",
     borderRadius: "20px",
     borderBottomLeftRadius: "0px",
-    backgroundColor: theme.palette.secondary.light,
+    color: "black",
+    backgroundColor: theme.palette.primary.light,
     padding: theme.spacing(1, 2),
     margin: theme.spacing(0, 2),
     display: "inline-block",
@@ -22,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     border: "0.5px",
     borderRadius: "20px",
     borderBottomRightRadius: "0px",
-    backgroundColor: theme.palette.text.hint,
+    backgroundColor: "rgba(0, 0, 0, 0.38)",
     padding: theme.spacing(1, 2),
     margin: theme.spacing(0, 2),
     display: "inline-block",

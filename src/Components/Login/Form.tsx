@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import Button from "@material-ui/core/Button";
-import Divider from "@material-ui/core/Divider";
-import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
+import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import makeStyles from '@mui/styles/makeStyles';
 
 import { postSession } from "../../Utils/Commons";
 import { IPostResponse, IRequestOptions, TRequestMethods } from "../domain";
@@ -179,7 +179,7 @@ const Form = () => {
         container
         direction="row"
         alignItems="center"
-        justify="center"
+        justifyContent="center"
         className={classes.grid}
       >
         <Grid item xs className={classes.paper2}>

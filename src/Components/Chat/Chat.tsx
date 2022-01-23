@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
-import Box from "@material-ui/core/Box";
-import ToggleButton from "@material-ui/lab/ToggleButton";
-import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
-import { makeStyles } from "@material-ui/core/styles";
+import Box from "@mui/material/Box";
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import makeStyles from '@mui/styles/makeStyles';
 
 import Messages from "./Messages";
 import ChatInput from "./ChatInput";

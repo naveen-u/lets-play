@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { useRecoilValue } from "recoil";
-import { Avatar as MuiAvatar } from "@material-ui/core";
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
-import GroupAddIcon from "@material-ui/icons/GroupAdd";
-import MuiAlert, { Color } from "@material-ui/lab/Alert";
-import Slide from "@material-ui/core/Slide";
-import Snackbar from "@material-ui/core/Snackbar";
-import Tooltip from "@material-ui/core/Tooltip";
-import { makeStyles } from "@material-ui/core/styles";
+import { Avatar as MuiAvatar } from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import MuiAlert, { AlertColor } from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
+import Tooltip from "@mui/material/Tooltip";
+import makeStyles from "@mui/styles/makeStyles";
 import { roomIdState } from "../stores/gameDataStore";
 
 const useStyles = makeStyles((theme) => ({
@@ -21,6 +20,9 @@ const useStyles = makeStyles((theme) => ({
   },
   copyButton: {
     backgroundColor: theme.palette.background.default,
+    "&:hover": {
+      color: theme.palette.background.default,
+    },
   },
   avatar: {
     backgroundColor: theme.palette.primary.main,
@@ -34,20 +36,20 @@ const Share = () => {
 
   const [openToast, setOpenToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const [severity, setSeverity] = useState("info" as Color);
+  const [severity, setSeverity] = useState<AlertColor>("info");
 
   const copyRoomCode = () => {
     navigator.clipboard
       .writeText(room)
       .then(() => {
         setToastMessage("Room code copied to clipboard!");
-        setSeverity("success" as Color);
+        setSeverity("success");
         setOpenToast(true);
       })
       .catch((err) => {
         // This can happen if the user denies clipboard permissions
         setToastMessage("Could not copy!");
-        setSeverity("error" as Color);
+        setSeverity("error");
         setOpenToast(true);
         console.error("Could not copy text: ", err);
       });
@@ -73,10 +75,6 @@ const Share = () => {
   const handleClose = () => {
     setOpenToast(false);
   };
-
-  function TransitionLeft(props: object) {
-    return <Slide {...props} direction="left" />;
-  }
 
   return (
     <>
@@ -108,7 +106,6 @@ const Share = () => {
             autoHideDuration={2000}
             onClose={handleClose}
             key="topright"
-            TransitionComponent={TransitionLeft}
           >
             <MuiAlert elevation={6} variant="filled" severity={severity}>
               {toastMessage}

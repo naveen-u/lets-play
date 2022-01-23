@@ -1,7 +1,7 @@
 import React from "react";
 import { RecoilRoot } from "recoil";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { ThemeProvider, Theme, StyledEngineProvider } from "@mui/material";
+import { ThemeProvider, StyledEngineProvider } from "@mui/material";
 import darkTheme from "./Themes/DarkTheme";
 import Login from "./Components/Login";
 import Play from "./Components/Play";

@@ -1,5 +1,5 @@
-import React from "react";
-import { useRecoilValue } from "recoil";
+import React, { useEffect } from "react";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
@@ -9,12 +9,13 @@ import Chat from "../../../Chat";
 import Game from "./Game";
 import PickTeams from "./PickTeams";
 import PlayerList from "./PlayerList";
-import { userIdState } from "../../../stores/gameDataStore";
+import { userIdState, userListState } from "../../../stores/gameDataStore";
 import { GameStates, Teams } from "../domain";
 import {
   blueMasterState,
   currentTeamState,
   gameConditionState,
+  playerListState,
   redMasterState,
   socket,
   SubscribeToStateChanges,
@@ -26,6 +27,8 @@ const Codenames = () => {
   const currentTeam = useRecoilValue(currentTeamState);
   const gameState = useRecoilValue(gameConditionState);
   const userId = useRecoilValue(userIdState);
+  const userList = useRecoilValue(userListState);
+  const setPlayerList = useSetRecoilState(playerListState);
 
   const ongoing = !(
     gameState === GameStates.JOIN ||
@@ -37,6 +40,16 @@ const Codenames = () => {
     ongoing &&
     ((currentTeam === Teams.BLUE && blueMaster?.id !== userId) ||
       (currentTeam === Teams.RED && redMaster?.id !== userId));
+
+  useEffect(() => {
+    setPlayerList(
+      userList.map((it) => ({
+        id: it.userId,
+        user: it.username,
+        team: Teams.NEUTRAL,
+      }))
+    );
+  }, []);
 
   return (
     <>

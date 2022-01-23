@@ -6,7 +6,7 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { Theme } from "@mui/material/styles";
 
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 
 import SpymasterInput from "./SpymasterInput";
 import StatusBar from "./StatusBar";
